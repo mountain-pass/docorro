@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns="http://windyroad.org/bwunit-0.0.0.xsd" xmlns:ns1="http://windyroad.org/bwunit-errors-0.0.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://windyroad.org/bwunit-concrete" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="Untitled" targetNamespace="http://windyroad.org/bwunit-concrete">
+    <wsdl:documentation>Version 1.1</wsdl:documentation>
+    <wsdl:import location="../Schemas/BWUnit.xsd" namespace="http://windyroad.org/bwunit-0.0.0.xsd"/>
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://windyroad.org/bwunit-0.0.0.xsd">
+            <xs:include schemaLocation="../Schemas/BWUnit.xsd"/>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://windyroad.org/bwunit-errors-0.0.0.xsd">
+            <xs:include schemaLocation="../Schemas/BWUnit-Errors.xsd"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="BWUnit">
+        <wsdl:port binding="tns:BWUnitBinding" name="BWUnit">
+            <soap:address location="http://localhost:5454/BWUnit"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="BWUnit">
+        <wsdl:operation name="runTestCase">
+            <wsdl:input message="tns:test-id-msg"/>
+            <wsdl:output message="tns:test-case-result-msg"/>
+            <wsdl:fault message="tns:license-error-msg" name="license-fault"/>
+            <wsdl:fault message="tns:test-not-found-msg" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="runTest">
+            <wsdl:input message="tns:test-id-msg"/>
+            <wsdl:output message="tns:test-result-msg"/>
+            <wsdl:fault message="tns:license-error-msg" name="license-fault"/>
+            <wsdl:fault message="tns:test-not-found-msg" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="runAllTestSuites">
+            <wsdl:input message="tns:settings-msg"/>
+            <wsdl:output message="tns:test-suites-results-msg"/>
+            <wsdl:fault message="tns:license-error-msg" name="license-fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="verifyLicense">
+            <wsdl:input message="tns:null-msg"/>
+            <wsdl:output message="tns:license-content-msg"/>
+            <wsdl:fault message="tns:license-error-msg" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="getTestSuites">
+            <wsdl:input message="tns:settings-msg"/>
+            <wsdl:output message="tns:test-suites-msg"/>
+            <wsdl:fault message="tns:license-error-msg" name="license-fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="runTestSuite">
+            <wsdl:input message="tns:test-id-msg"/>
+            <wsdl:output message="tns:test-suite-result-msg"/>
+            <wsdl:fault message="tns:license-error-msg" name="license-fault"/>
+            <wsdl:fault message="tns:test-not-found-msg" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="stopEngine">
+            <wsdl:input message="tns:null-msg"/>
+            <wsdl:output message="tns:null-msg"/>
+        </wsdl:operation>
+        <wsdl:operation name="installLicense">
+            <wsdl:input message="tns:license-key-msg"/>
+            <wsdl:output message="tns:license-content-msg"/>
+            <wsdl:fault message="tns:license-error-msg" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="uninstallLicense">
+            <wsdl:input message="tns:null-msg"/>
+            <wsdl:output message="tns:null-msg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BWUnitBinding" type="tns:BWUnit">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="runTestCase">
+            <soap:operation soapAction="/BWUnit/runTestCase" style="document"/>
+            <wsdl:input>
+                <soap:body parts="test settings" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="test-case-result" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="license-fault">
+                <soap:fault name="license-fault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="runTest">
+            <soap:operation soapAction="/BWUnit/runTest" style="document"/>
+            <wsdl:input>
+                <soap:body parts="test settings" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="test-result" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="license-fault">
+                <soap:fault name="license-fault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="runAllTestSuites">
+            <soap:operation soapAction="/BWUnit/runAllTestSuites" style="document"/>
+            <wsdl:input>
+                <soap:body parts="settings" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="test-suites-results" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="license-fault">
+                <soap:fault name="license-fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="verifyLicense">
+            <soap:operation soapAction="/BWUnit/verifyLicense" style="document"/>
+            <wsdl:input>
+                <soap:body parts="null" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="license-content" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getTestSuites">
+            <soap:operation soapAction="/BWUnit/getTestSuites" style="document"/>
+            <wsdl:input>
+                <soap:body parts="settings" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="test-suites" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="license-fault">
+                <soap:fault name="license-fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="runTestSuite">
+            <soap:operation soapAction="/BWUnit/runTestSuite" style="document"/>
+            <wsdl:input>
+                <soap:body parts="test settings" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="test-suite-result" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="license-fault">
+                <soap:fault name="license-fault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="stopEngine">
+            <soap:operation soapAction="/BWUnit/stopEngine" style="document"/>
+            <wsdl:input>
+                <soap:body parts="null" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="null" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="installLicense">
+            <soap:operation soapAction="/BWUnit/installLicense" style="document"/>
+            <wsdl:input>
+                <soap:body parts="license-key" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="license-content" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="uninstallLicense">
+            <soap:operation soapAction="/BWUnit/uninstallLicense" style="document"/>
+            <wsdl:input>
+                <soap:body parts="null" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="null" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="test-id-msg">
+        <wsdl:part element="ns:test-id" name="test"/>
+        <wsdl:part element="ns:settings" name="settings"/>
+    </wsdl:message>
+    <wsdl:message name="test-case-result-msg">
+        <wsdl:part element="ns:test-case-result" name="test-case-result"/>
+    </wsdl:message>
+    <wsdl:message name="license-error-msg">
+        <wsdl:part element="ns1:license-error" name="license-error"/>
+    </wsdl:message>
+    <wsdl:message name="test-not-found-msg">
+        <wsdl:part element="ns1:test-not-found-error" name="test-not-found"/>
+    </wsdl:message>
+    <wsdl:message name="test-result-msg">
+        <wsdl:part element="ns:test-result" name="test-result"/>
+    </wsdl:message>
+    <wsdl:message name="settings-msg">
+        <wsdl:part element="ns:settings" name="settings"/>
+    </wsdl:message>
+    <wsdl:message name="test-suites-results-msg">
+        <wsdl:part element="ns:test-suites-results" name="test-suites-results"/>
+    </wsdl:message>
+    <wsdl:message name="null-msg">
+        <wsdl:documentation>BW 5.5.3 doesn't play nice with operations that take no input
+GI 3.5.1 doesn't play nice with operations that take no input or give no output
+		</wsdl:documentation>
+        <wsdl:part element="ns:empty" name="null"/>
+    </wsdl:message>
+    <wsdl:message name="license-content-msg">
+        <wsdl:part element="ns:license-content" name="license-content"/>
+    </wsdl:message>
+    <wsdl:message name="test-suites-msg">
+        <wsdl:part element="ns:test-suites" name="test-suites"/>
+    </wsdl:message>
+    <wsdl:message name="test-suite-result-msg">
+        <wsdl:part element="ns:test-suite-result" name="test-suite-result"/>
+    </wsdl:message>
+    <wsdl:message name="license-key-msg">
+        <wsdl:part element="ns:license-key" name="license-key"/>
+    </wsdl:message>
+</wsdl:definitions>
