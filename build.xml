@@ -105,7 +105,7 @@
     </target>
     
     <target name="wsdl-example"
-            description="builds wsdl user guide"
+            description="builds wsdl user guide - just an exmaple of how xsd user guides should work/look"
             depends="-init,retrieve">
         <mkdir dir="build" />
         <property name="in.location" location="examples/BWUnit.wsdl" />
@@ -136,4 +136,7 @@
                  location="src/schemas/xhtml-special.ent" />
         </schemavalidate>
     </target>
+    
+    <target name="post-commit" description="just something to get started" depends="wsdl-example"/>
+
 </project>
