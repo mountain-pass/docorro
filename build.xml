@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="build"
+         name="Docorro-Build"
+         xmlns="antlib:org.apache.tools.ant"
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:tibant="org.windyroad.tibant">
+
+
+
+    <echo taskname="${ant.project.name}">LOADING: ${user.home}/${ant.project.name}.properties</echo>
+    <property file="${user.home}/${project.name}.properties" />
+    <echo taskname="${ant.project.name}">LOADING: ${user.home}/build.properties</echo>
+    <property file="${user.home}/build.properties" />
+    <property name="config.filename" value="${user.name}.properties" />
+    <echo taskname="${ant.project.name}">LOADING: config/${config.filename}</echo>
+    <property file="config/${config.filename}" />
+    <echo taskname="${ant.project.name}">LOADING: config/default.properties</echo>
+    <property file="config/default.properties" />
+
+    <property name="ivy.install.version" value="2.2.0" />
+    <property name="ivy.jar.dir" location="${user.home}/.ivy2/jars" />
+    <property name="ivy.jar.file"
+              location="${ivy.jar.dir}/ivy-${ivy.install.version}.jar" />
+
+    <defaultexcludes echo="false" add="**/*.hg" />
+    <defaultexcludes echo="false" add="**/*.hg/**" />
+    <defaultexcludes echo="false" add="**/*.hgtags" />
+
+    <target name="-init">
+        <mkdir dir="build" />
+        <mkdir dir="lib" />
+    </target>
+
+    <target name="clean" description="" depends="clean-build,clean-libs" />
+
+    <target name="clean-build" description="">
+        <delete dir="build" verbose="true" />
+    </target>
+
+    <target name="clean-local" description="">
+        <delete dir="${user.home}/.ivy2/local/docorro" verbose="true" />
+    </target>
+
+    <target name="clean-libs" description="">
+        <delete dir="lib" />
+    </target>
+
+    <target name="build" depends="" description="" />
+
+    <target name="-download-ivy" unless="ivy.downloaded">
+        <mkdir dir="${ivy.jar.dir}" />
+        <!-- download Ivy from web site so that it can be used even without any special installation -->
+        <echo message="installing ivy..." />
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+             dest="${ivy.jar.file}"
+             usetimestamp="true"
+             verbose="true" />
+    </target>
+
+    <target name="-check-ivy-downloaded">
+        <condition property="ivy.downloaded">
+            <available file="${ivy.jar.file}" />
+        </condition>
+    </target>
+
+    <target name="-load-ivy"
+            depends="-check-ivy-downloaded,-download-ivy"
+            unless="ivy.loaded">
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar" />
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant"
+                 classpathref="ivy.lib.path" />
+        <property name="ivy.report.todir" location="build/ivy" />
+        <ivy:configure file="config/ivysettings.xml" />
+        <ivy:resolve file="${ivy.dep.file}" conf="${ivy.configurations}" />
+        <property name="ivy.loaded" value="true" />
+    </target>
+
+    <target name="-load-ant-contrib"
+            depends="retrieve"
+            unless="ant.contrib.loaded">
+        <property name="ant-contrib.jar.path"
+                  location="lib/ant-contrib-1.0b3.jar" />
+        <taskdef resource="net/sf/antcontrib/antlib.xml">
+            <classpath>
+                <pathelement location="${ant-contrib.jar.path}" />
+                <pathelement location="${tibco.home.tpcl}/lib/httpclient_3.0/commons-httpclient.jar" />
+                <pathelement location="${tibco.home.tpcl}/lib/commons-logging.jar" />
+                <pathelement location="${tibco.home.tpcl}/lib/commons-codec-1.3.jar" />
+            </classpath>
+        </taskdef>
+        <property name="ant.contrib.loaded" value="true" />
+    </target>
+
+
+    <target name="retrieve"
+            description="retrieve dependancies with ivy"
+            depends="-load-ivy">
+        <ivy:retrieve />
+        <ivy:artifactproperty
+               name="[module].[artifact]" 
+               value="lib/[artifact]-[revision].[ext]"/>
+    </target>
+    
+    <target name="wsdl-example"
+            description="builds wsdl user guide"
+            depends="-init,retrieve">
+        <mkdir dir="build" />
+        <property name="in.location" location="examples/BWUnit.wsdl" />
+        <property name="style.location" location="src/xslt/docorro.xslt" />
+        <property name="out.location" location="build/BWUnit.html" />
+        <java classname="net.sf.saxon.Transform"
+              taskname="wsdl-example"
+              failonerror="true">
+            <classpath path="${saxon-he.saxon-he}" />
+            <arg value="-s:${in.location}" />
+            <arg value="-xsl:${style.location}" />
+            <arg value="-o:${out.location}" />
+        </java>
+        <schemavalidate file="${out.location}">
+            <schema namespace="http://www.w3.org/XML/1998/namespace"
+                    file="src/schemas/xml.xsd" />
+            <schema namespace="http://www.w3.org/1999/xhtml"
+                    file="src/schemas/xhtml-strict.xsd" />
+            <schema namespace="http://www.w3.org/2001/XMLSchema"
+                    file="src/schemas/XMLSchema.xsd" />
+            <dtd publicId="-//W3C//DTD XHTML 1.0 Strict//EN"
+                 location="src/schemas/xhtml1-strict.dtd" />
+            <dtd publicId="-//W3C//ENTITIES Latin 1 for XHTML//EN"
+                 location="src/schemas/xhtml-lat1.ent" />
+            <dtd publicId="-//W3C//ENTITIES Symbols for XHTML//EN"
+                 location="src/schemas/xhtml-symbol.ent" />
+            <dtd publicId="-//W3C//ENTITIES Special for XHTML//EN"
+                 location="src/schemas/xhtml-special.ent" />
+        </schemavalidate>
+    </target>
+</project>
