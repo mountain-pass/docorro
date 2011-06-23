@@ -173,7 +173,6 @@ h2 {
 	padding-top: 10px;
 	font-weight: bold;
 	font-size: 1.3em;
-	border-top: 4px solid #000;
 }
 
 h3 {
@@ -181,7 +180,6 @@ h3 {
 	padding-top: 6px;
 	font-weight: bold;
 	font-size: 1.1em;
-	border-top: 2px solid #000;
 }
 
 h5.macrodef {
@@ -211,7 +209,6 @@ h4 {
 	font-weight: bold;
 	font-size: 1em;
 	color: #555;
-    border-top: 1px solid #AAA;
 }
 
 h5 {
@@ -219,7 +216,6 @@ h5 {
 	padding-top: 5px;
 	font-weight: bold;
 	font-size: 0.8em;
-    border-top: 1px solid #DDD;
 }
 
 h6 {
