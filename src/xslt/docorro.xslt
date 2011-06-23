@@ -546,9 +546,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 								<xsl:for-each select="wsdl:definitions/wsdl:message">
 									<xsl:sort select="@name" />
 									<li>
-										<!--a href="{concat('#', tibant:convert-to-id(@name))}"-->
-										<xsl:value-of select="@name" />
-										<!--/a-->
+										<a href="{concat('#', tibant:convert-to-id(@name))}">
+											<xsl:value-of select="@name" />
+										</a>
 									</li>
 								</xsl:for-each>
 							</ul>
@@ -559,7 +559,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 						</xsl:if>
 
 						<xsl:if
-							test="wsdl:definitions/wsdl:types/xs:schema/xs:simpleType[exists(.//xs:enumeration)]">
+							test="false() and wsdl:definitions/wsdl:types/xs:schema/xs:simpleType[exists(.//xs:enumeration)]">
 							<h2 id="{tibant:convert-to-id('Enumeration')}">Enumerations</h2>
 							<p>
 								<xsl:text>The following section details each of the enumerations user by </xsl:text>
@@ -570,9 +570,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 									select="wsdl:definitions/wsdl:types/xs:schema/xs:simpleType[exists(.//xs:enumeration)]">
 									<xsl:sort select="@name" />
 									<li>
-										<!--a href="{concat('#', tibant:convert-to-id(@name))}"-->
-										<xsl:value-of select="@name" />
-										<!--/a-->
+										<a href="{concat('#', tibant:convert-to-id(@name))}">
+											<xsl:value-of select="@name" />
+										</a>
 									</li>
 								</xsl:for-each>
 							</ul>
@@ -587,9 +587,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 					<ul id="contents-list">
 						<xsl:for-each select="$content/html:h2">
 							<li>
-								<!-- a href="{concat('#',@id)}"-->
-								<xsl:value-of select="." />
-								<!--/a-->
+								<a href="{concat('#',@id)}">
+									<xsl:value-of select="." />
+								</a>
 								<xsl:variable name="next" select="following-sibling::html:h2[1]" />
 								<xsl:variable name="next-h3"
 									select="$next/following-sibling::html:h3" />
@@ -597,9 +597,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 									<ul>
 										<xsl:for-each select="following-sibling::html:h3 except $next-h3">
 											<li>
-												<!--a href="{concat('#',@id)}"-->
-												<xsl:value-of select="." />
-												<!--/a-->
+												<a href="{concat('#',@id)}">
+													<xsl:value-of select="." />
+												</a>
 												<xsl:variable name="next"
 													select="following-sibling::html:h3[1]" />
 												<xsl:variable name="next-h4"
@@ -608,9 +608,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 													<ul>
 														<xsl:for-each select="following-sibling::html:h4 except $next-h4">
 															<li>
-																<!--a href="{concat('#',@id)}"-->
-																<xsl:value-of select="." />
-																<!--/a-->
+																<a href="{concat('#',@id)}">
+																	<xsl:value-of select="." />
+																</a>
 															</li>
 														</xsl:for-each>
 													</ul>
@@ -706,9 +706,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 							</xsl:choose>
 						</td>
 						<td>
-							<!--a href="{concat('#', tibant:convert-to-id($message))}"-->
-							<xsl:value-of select="$message" />
-							<!--/a-->
+							<a href="{concat('#', tibant:convert-to-id($message))}">
+								<xsl:value-of select="$message" />
+							</a>
 						</td>
 					</tr>
 				</xsl:for-each>
@@ -733,14 +733,12 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		<ul>
 			<xsl:for-each select="$references">
 				<li>
-					<!--
-						a href="{concat('#',tibant:convert-to-id(concat(../../@name,'
-						',../@name)))}"
-					-->
-					<xsl:value-of select="../../@name" />
-					<xsl:text>:</xsl:text>
-					<xsl:value-of select="../@name" />
-					<!--/a-->
+					<a
+						href="{concat('#',tibant:convert-to-id(concat(../../@name,' ',../@name)))}">
+						<xsl:value-of select="../../@name" />
+						<xsl:text>:</xsl:text>
+						<xsl:value-of select="../@name" />
+					</a>
 				</li>
 			</xsl:for-each>
 		</ul>
@@ -1452,14 +1450,13 @@ A CONTENT;</xsl:text>
 				</xsl:call-template>
 				<xsl:variable name="attribute"
 					select="replace($content, '(.*)@\{(.+?)\}(.*)', '$2', 's')" />
-				<!--
-					a href="{tibant:convert-to-id(concat('#', $section, '_',
-					$attribute))}"
-				-->
-				<xsl:text>@{</xsl:text>
-				<xsl:value-of select="$attribute" />
-				<xsl:text>}</xsl:text>
-				<!--/a-->
+				<a
+					href="{tibant:convert-to-id(concat('#', $section, '_',
+					$attribute))}">
+					<xsl:text>@{</xsl:text>
+					<xsl:value-of select="$attribute" />
+					<xsl:text>}</xsl:text>
+				</a>
 				<xsl:call-template name="inline">
 					<xsl:with-param name="content"
 						select="replace($content, '(.*)(@\{.+?\})(.*)', '$3', 's')" />
@@ -1481,9 +1478,9 @@ A CONTENT;</xsl:text>
 			</xsl:when>
 			<!-- macro name -->
 			<xsl:when test="exists($macros[@name=$content])">
-				<!--a href="{tibant:convert-to-id(concat('#', $content))}"-->
-				<xsl:value-of select="$content" />
-				<!--/a-->
+				<a href="{tibant:convert-to-id(concat('#', $content))}">
+					<xsl:value-of select="$content" />
+				</a>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:copy-of select="$content" />
