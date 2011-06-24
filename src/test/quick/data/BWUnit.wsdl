@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--Created by TIBCO WSDL-->
-<wsdl:definitions xmlns:ns="http://windyroad.org/bwunit-0.0.0.xsd" xmlns:ns1="http://windyroad.org/bwunit-errors-0.0.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://windyroad.org/bwunit-concrete" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="Untitled" targetNamespace="http://windyroad.org/bwunit-concrete">
+<wsdl:definitions xmlns:ns="http://windyroad.org/bwunit-0.0.0.xsd" xmlns:ns1="http://windyroad.org/bwunit-errors-0.0.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://windyroad.org/bwunit-concrete" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="BWUnit" targetNamespace="http://windyroad.org/bwunit-concrete">
     <wsdl:documentation>Version 1.1</wsdl:documentation>
     <wsdl:import location="../Schemas/BWUnit.xsd" namespace="http://windyroad.org/bwunit-0.0.0.xsd"/>
     <wsdl:types>
