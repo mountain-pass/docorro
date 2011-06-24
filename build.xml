@@ -3,7 +3,7 @@
          name="Docorro-Build"
          xmlns="antlib:org.apache.tools.ant"
          xmlns:ivy="antlib:org.apache.ivy.ant"
-         xmlns:tibant="org.windyroad.tibant">
+         xmlns:docorro="org.windyroad.docorro">
 
 
 
@@ -78,6 +78,17 @@
         <property name="ivy.loaded" value="true" />
     </target>
 
+    <target name="-load-antunit" depends="retrieve" unless="antunit.loaded">
+        <taskdef uri="antlib:org.apache.ant.antunit"
+                 resource="org/apache/ant/antunit/antlib.xml">
+            <classpath>
+                <pathelement location="${ant-antunit.ant-antunit}" />
+            </classpath>
+        </taskdef>
+        <property name="antunit.loaded" value="true" />
+    </target>
+
+
     <target name="-load-ant-contrib"
             depends="retrieve"
             unless="ant.contrib.loaded">
@@ -94,32 +105,70 @@
         <property name="ant.contrib.loaded" value="true" />
     </target>
 
-
     <target name="retrieve"
             description="retrieve dependancies with ivy"
             depends="-load-ivy">
         <ivy:retrieve />
-        <ivy:artifactproperty
-               name="[module].[artifact]" 
-               value="lib/[artifact]-[revision].[ext]"/>
+        <ivy:artifactproperty name="[module].[artifact]"
+                              value="lib/[artifact]-[revision].[ext]" />
     </target>
-    
-    <target name="wsdl-example"
-            description="builds wsdl user guide - just an exmaple of how xsd user guides should work/look"
-            depends="-init,retrieve">
-        <mkdir dir="build" />
-        <property name="in.location" location="examples/BWUnit.wsdl" />
-        <property name="style.location" location="src/xslt/docorro.xslt" />
-        <property name="out.location" location="build/BWUnit.html" />
-        <java classname="net.sf.saxon.Transform"
-              taskname="wsdl-example"
-              failonerror="true">
-            <classpath path="${saxon-he.saxon-he}" />
-            <arg value="-s:${in.location}" />
-            <arg value="-xsl:${style.location}" />
-            <arg value="-o:${out.location}" />
-        </java>
-        <schemavalidate file="${out.location}">
+
+    <macrodef name="xslt"
+              uri="org.windyroad.docorro"
+              description="Custom XSLT task using Saxon XSLT engine, to workaround Apache Ant Defect 49271 
+(https://issues.apache.org/bugzilla/show_bug.cgi?id=49271).\\
+_(Available since verison 1.4.1)_">
+        <attribute name="in"
+                   description="specifies a single XML document to be styled." />
+        <attribute name="out"
+                   description="specifies the output name for the styled result from the in attribute." />
+        <attribute name="style"
+                   description="name of the stylesheet to use - given either relative to the project's basedir or as an absolute path." />
+        <attribute name="classpath"
+                   default="${saxon-he.saxon-he}"
+                   description="the classpath to the saxon jar" />
+        <attribute name="taskname" default="tibant:xslt" />
+        <element name="params"
+                 optional="true"
+                 implicit="true"
+                 description="additional parameters to pass to saxon in 
+            the form `&lt;arg value=&quot;someparam=somevalue&quot;/&gt;`. See 
+            http://www.saxonica.com/documentation/using-xsl/commandline.xml for details" />
+        <!--
+
+==== Example ====
+
+    <tibant:xslt in="myinput.xml"
+                 out="build/myoutput.xml"
+                 style="src/xslt/mystyle.xslt">
+        <arg value="+myotherinput=myotherinput.xml" />
+        <arg value="basedir=${basedir}" />
+    </tibant:xslt>
+
+The above example applies the `src/xslt/mystyle.xslt` stylesheet against `myinput.xml`. It sets the parameter `basedir`
+to `${basedir}` and the parameter `myotherinput` to the document node of `myotherinput.xml` and writes the results to
+`build/myoutput.xml`
+
+-->
+        <sequential>
+            <property name="@{in}.location" location="@{in}" />
+            <property name="@{style}.location" location="@{style}" />
+            <property name="@{out}.location" location="@{out}" />
+            <java classname="net.sf.saxon.Transform"
+                  classpath="@{classpath}"
+                  taskname="@{taskname}"
+                  failonerror="true">
+                <classpath path="@{classpath}" />
+                <arg value="-s:${@{in}.location}" />
+                <arg value="-xsl:${@{style}.location}" />
+                <arg value="-o:${@{out}.location}" />
+                <params />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <presetdef name="validate-xhtml" uri="org.windyroad.docorro">
+        <schemavalidate>
             <schema namespace="http://www.w3.org/XML/1998/namespace"
                     file="src/schemas/xml.xsd" />
             <schema namespace="http://www.w3.org/1999/xhtml"
@@ -135,8 +184,76 @@
             <dtd publicId="-//W3C//ENTITIES Special for XHTML//EN"
                  location="src/schemas/xhtml-special.ent" />
         </schemavalidate>
+    </presetdef>
+
+    <presetdef name="schematron-include" uri="org.windyroad.docorro">
+        <docorro:xslt style="src/xslt/schematron/iso_dsdl_include.xsl" />
+    </presetdef>
+
+    <presetdef name="schematron-patterns" uri="org.windyroad.docorro">
+        <docorro:xslt style="src/xslt/schematron/iso_abstract_expand.xsl" />
+    </presetdef>
+
+    <presetdef name="schematron-compile" uri="org.windyroad.docorro">
+        <docorro:xslt style="src/xslt/schematron/iso_svrl_for_xslt2.xsl" />
+    </presetdef>
+
+    <presetdef name="svrl-2-junit" uri="org.windyroad.docorro">
+        <docorro:xslt style="src/xslt/svrl-2-junit.xslt" />
+    </presetdef>
+
+    <macrodef name="schematron" uri="org.windyroad.docorro">
+        <attribute name="in"
+                   description="specifies a single XML document to be styled." />
+        <attribute name="out"
+                   description="specifies the output name for the styled result from the in attribute." />
+        <attribute name="schema"
+                   description="specifies the output name for the styled result from the in attribute." />
+        <sequential>
+
+            <!-- expand inclusions -->
+            <tempfile property="@{schema}.inclusions" deleteonexit="true" />
+            <docorro:schematron-include in="@{schema}"
+                                        out="${@{schema}.inclusions}" />
+
+            <!-- expand abstract patterns -->
+            <tempfile property="@{schema}.patterns" deleteonexit="true" />
+            <docorro:schematron-patterns in="${@{schema}.inclusions}"
+                                         out="${@{schema}.patterns}" />
+
+            <!-- compile it -->
+            <tempfile property="@{schema}.xslt" deleteonexit="true" />
+            <docorro:schematron-compile in="${@{schema}.patterns}"
+                                        out="${@{schema}.xslt}" />
+
+            <docorro:xslt style="${@{schema}.xslt}" in="@{in}" out="@{out}" />
+        </sequential>
+    </macrodef>
+
+    <target name="post-commit"
+            description="just something to get started"
+            depends="run-tests" />
+
+    <target name="run-tests"
+            description="Run tests"
+            depends="">
+        <subant target="run-test">
+            <fileset dir="src/test/quick" includes="*.xml" />
+        </subant>
+        
+        <!-- find out how many tests we have -->
+        <resourcecount property="quick.test.file.count">
+            <fileset dir="src/test/quick" includes="*.xml" />
+        </resourcecount>
+        
+        <!-- just make sure we have results for each test -->
+        <fail message="the number of test results does not match the number of test files">
+            <condition>
+                <resourcecount when="ne" count="${quick.test.file.count}">
+                    <fileset dir="build" includes="*.junit" />
+                </resourcecount>
+            </condition>
+        </fail>
     </target>
-    
-    <target name="post-commit" description="just something to get started" depends="wsdl-example"/>
 
 </project>
