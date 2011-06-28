@@ -759,21 +759,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			</thead>
 			<tbody>
 				<xsl:variable name="rows">
-					<xsl:for-each select="wsdl:part">
-						<xsl:variable name="parttype" select="docorro:get-element(@element,.)" />
-						<xsl:message>
-							<xsl:copy-of select="$parttype" />
-						</xsl:message>
-						<xsl:apply-templates select="$parttype">
-							<xsl:with-param name="indent" select="''" />
-							<xsl:with-param name="section" select="$section" />
-							<xsl:with-param name="minOccurs" select="'1'" />
-							<xsl:with-param name="maxOccurs" select="'1'" />
-							<xsl:with-param name="expanded-nodes">
-								<nodes />
-							</xsl:with-param>
-						</xsl:apply-templates>
-					</xsl:for-each>
+					<xsl:apply-templates select="wsdl:part">
+						<xsl:with-param name="section" select="$section" />
+					</xsl:apply-templates>
 				</xsl:variable>
 				<xsl:for-each select="$rows/html:tr">
 					<xsl:copy>
@@ -791,6 +779,57 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 				</xsl:for-each>
 			</tbody>
 		</table>
+	</xsl:template>
+
+	<xsl:template match="wsdl:part[exists(@element)]">
+		<xsl:param name="section" />
+		<xsl:variable name="parttype" select="docorro:get-element(@element,.)" />
+		<xsl:message>
+			<xsl:copy-of select="$parttype" />
+		</xsl:message>
+		<xsl:apply-templates select="$parttype">
+			<xsl:with-param name="indent" select="''" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="minOccurs" select="'1'" />
+			<xsl:with-param name="maxOccurs" select="'1'" />
+			<xsl:with-param name="expanded-nodes">
+				<nodes />
+			</xsl:with-param>
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="wsdl:part[exists(@type)]">
+		<xsl:param name="section" />
+		<tr>
+			<td>
+				<xsl:attribute name="class">required</xsl:attribute>
+				<xsl:value-of select="@name" />
+			</td>
+			<td>
+				<xsl:value-of select="@type" />
+			</td>
+			<td>
+				<xsl:text>1..1</xsl:text>
+			</td>
+			<td>
+				<xsl:call-template name="output-content">
+					<xsl:with-param name="content"
+						select="wsdl:documentation" />
+					<xsl:with-param name="section" select="$section" />
+				</xsl:call-template>
+			</td>
+		</tr>
+        <xsl:variable name="parttype" select="docorro:get-type(@type,.)" />
+        <xsl:message>
+            <xsl:copy-of select="$parttype" />
+        </xsl:message>
+        <xsl:apply-templates select="$parttype">
+            <xsl:with-param name="indent" select="'&#160;&#160;&#160;&#160;'" />
+            <xsl:with-param name="section" select="$section" />
+            <xsl:with-param name="expanded-nodes">
+                <nodes />
+            </xsl:with-param>
+        </xsl:apply-templates>
 	</xsl:template>
 
 
@@ -1013,7 +1052,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="xs:sequence">
+	<xsl:template match="xs:sequence | xs:all">
 		<xsl:param name="indent" />
 		<xsl:param name="section" />
 		<xsl:param name="expanded-nodes" />
@@ -1065,7 +1104,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="xs:extension">
+	<xsl:template match="xs:extension | xs:restriction">
 		<xsl:param name="indent" />
 		<xsl:param name="section" />
 		<xsl:param name="expanded-nodes" />
