@@ -8,4 +8,12 @@
             </assert>
         </rule>
     </pattern>
+
+    <pattern name="Check Type Expeansion">
+        <rule context="/xhtml:html/xhtml:body/xhtml:div[@id='container']/xhtml:table/xhtml:tbody[xhtml:tr/xhtml:td[1] = 'license-content']">
+            <assert test="count(tr) > 1">
+                There should be more than one row to describe the license-content type
+            </assert>
+        </rule>
+    </pattern>
 </schema>

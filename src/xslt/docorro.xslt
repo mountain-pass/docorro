@@ -1,18 +1,16 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<xsl:stylesheet exclude-result-prefixes="xsl xs tibant html wsdl"
+<xsl:stylesheet exclude-result-prefixes="xsl xs docorro html wsdl"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:tibant="http://windyroad.org/tibant/functions" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:docorro="http://windyroad.org/docorro/functions" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	version="2.0">
 	<xsl:output method="xml" omit-xml-declaration="no" indent="yes"
 		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
 		doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" />
 
-	<xsl:variable name="macros" select="/wsdl:definitions/macrodef" />
-	<xsl:variable name="operations"
-		select="/wsdl:definitions/wsdl:portType/wsdl:operation" />
-
-	<xsl:variable name="imports" select="/wsdl:definitions/wsdl:import" />
+	<xsl:variable name="type-catalogue">
+		<xsl:copy-of select="//xs:schema" />
+	</xsl:variable>
 
 	<xsl:template match="/">
 		<html>
@@ -525,7 +523,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 						</xsl:call-template>
 
 						<xsl:if test="wsdl:definitions/wsdl:portType">
-							<h2 id="{tibant:convert-to-id('Operation')}">Operations</h2>
+							<h2 id="{docorro:convert-to-id('Operation')}">Operations</h2>
 							<xsl:for-each select="wsdl:definitions/wsdl:portType/wsdl:operation">
 								<xsl:sort select="@name" />
 								<xsl:apply-templates select="." />
@@ -533,7 +531,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 						</xsl:if>
 
 						<xsl:if test="wsdl:definitions/wsdl:message">
-							<h2 id="{tibant:convert-to-id('Messages')}">Messages</h2>
+							<h2 id="{docorro:convert-to-id('Messages')}">Messages</h2>
 							<p>
 								<xsl:text>The following section details each of the messages defined by </xsl:text>
 								<xsl:value-of select="wsdl:definitions/@name" />
@@ -542,7 +540,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 								<xsl:for-each select="wsdl:definitions/wsdl:message">
 									<xsl:sort select="@name" />
 									<li>
-										<a href="{concat('#', tibant:convert-to-id(@name))}">
+										<a href="{concat('#', docorro:convert-to-id(@name))}">
 											<xsl:value-of select="@name" />
 										</a>
 									</li>
@@ -556,7 +554,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 
 						<xsl:if
 							test="false() and wsdl:definitions/wsdl:types/xs:schema/xs:simpleType[exists(.//xs:enumeration)]">
-							<h2 id="{tibant:convert-to-id('Enumeration')}">Enumerations</h2>
+							<h2 id="{docorro:convert-to-id('Enumeration')}">Enumerations</h2>
 							<p>
 								<xsl:text>The following section details each of the enumerations user by </xsl:text>
 								<xsl:value-of select="wsdl:definitions/@name" />
@@ -566,7 +564,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 									select="wsdl:definitions/wsdl:types/xs:schema/xs:simpleType[exists(.//xs:enumeration)]">
 									<xsl:sort select="@name" />
 									<li>
-										<a href="{concat('#', tibant:convert-to-id(@name))}">
+										<a href="{concat('#', docorro:convert-to-id(@name))}">
 											<xsl:value-of select="@name" />
 										</a>
 									</li>
@@ -626,7 +624,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 
 	<xsl:template match="wsdl:operation">
 		<xsl:variable name="section" select="../@name" />
-		<h3 id="{tibant:convert-to-id(concat($section, ' ', @name))}">
+		<h3 id="{docorro:convert-to-id(concat($section, ' ', @name))}">
 			<xsl:value-of select="@name" />
 		</h3>
 		<table>
@@ -702,7 +700,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 							</xsl:choose>
 						</td>
 						<td>
-							<a href="{concat('#', tibant:convert-to-id($message))}">
+							<a href="{concat('#', docorro:convert-to-id($message))}">
 								<xsl:value-of select="$message" />
 							</a>
 						</td>
@@ -714,7 +712,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 
 	<xsl:template match="wsdl:message">
 		<xsl:variable name="section" select="@name" />
-		<h3 id="{tibant:convert-to-id($section)}">
+		<h3 id="{docorro:convert-to-id($section)}">
 			<xsl:value-of select="$section" />
 		</h3>
 		<xsl:variable name="references"
@@ -723,6 +721,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			<xsl:text>Message Type: </xsl:text>
 			<xsl:for-each-group select="$references" group-by="local-name()">
 				<xsl:value-of select="current-grouping-key()" />
+				<xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
 			</xsl:for-each-group>
 		</p>
 		<p>Used in:</p>
@@ -730,7 +729,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			<xsl:for-each select="$references">
 				<li>
 					<a
-						href="{concat('#',tibant:convert-to-id(concat(../../@name,' ',../@name)))}">
+						href="{concat('#',docorro:convert-to-id(concat(../../@name,' ',../@name)))}">
 						<xsl:value-of select="../../@name" />
 						<xsl:text>:</xsl:text>
 						<xsl:value-of select="../@name" />
@@ -755,32 +754,19 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			<tbody>
 				<xsl:variable name="rows">
 					<xsl:for-each select="wsdl:part">
-						<xsl:variable name="parttype"
-							select="tibant:get-type(@element,//wsdl:definitions,//wsdl:definitions/wsdl:types/xs:schema)" />
-						<tr>
-							<td class="required">
-								<xsl:value-of select="@name" />
-							</td>
-							<td>
-								<xsl:value-of select="@element" />
-							</td>
-							<td>
-								<xsl:text>1..1</xsl:text>
-							</td>
-							<td>
-								<xsl:call-template name="output-content">
-									<xsl:with-param name="content"
-										select="$parttype/xs:annotation/xs:documentation" />
-									<xsl:with-param name="section" select="$section" />
-								</xsl:call-template>
-							</td>
-						</tr>
-						<xsl:call-template name="output-complex-type">
-							<xsl:with-param name="type" select="$parttype" />
-							<xsl:with-param name="indent" select="'&#160;&#160;&#160;&#160;'" />
-							<xsl:with-param name="doc" select="//wsdl:definitions" />
+						<xsl:variable name="parttype" select="docorro:get-element(@element,.)" />
+						<xsl:message>
+							<xsl:copy-of select="$parttype" />
+						</xsl:message>
+						<xsl:apply-templates select="$parttype">
+							<xsl:with-param name="indent" select="''" />
 							<xsl:with-param name="section" select="$section" />
-						</xsl:call-template>
+							<xsl:with-param name="minOccurs" select="'1'" />
+							<xsl:with-param name="maxOccurs" select="'1'" />
+							<xsl:with-param name="expanded-nodes">
+								<nodes />
+							</xsl:with-param>
+						</xsl:apply-templates>
 					</xsl:for-each>
 				</xsl:variable>
 				<xsl:for-each select="$rows/html:tr">
@@ -801,9 +787,118 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		</table>
 	</xsl:template>
 
+
+	<xsl:template match="xs:element[exists(xs:complexType) or exists(@type)]">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<xsl:param name="minOccurs" />
+		<xsl:param name="maxOccurs" />
+		<xsl:param name="expanded-nodes" />
+		<xsl:message>
+			<xsl:text>Element: </xsl:text>
+			<xsl:value-of select="@name" />
+		</xsl:message>
+		<xsl:message>
+			<xsl:text>Visited list: </xsl:text>
+			<xsl:copy-of select="$expanded-nodes" />
+		</xsl:message>
+		<tr>
+			<xsl:variable name="cardinality"
+				select="docorro:get-cardinality(.,$minOccurs,$maxOccurs)" />
+			<td>
+				<xsl:if test="not(starts-with($cardinality,'0'))">
+					<xsl:attribute name="class">required</xsl:attribute>
+				</xsl:if>
+				<xsl:value-of select="$indent" />
+				<xsl:value-of select="@name" />
+			</td>
+			<td>
+				<xsl:choose>
+                    <xsl:when test="exists(xs:complexType) and empty(xs:complexType/*)">
+                        <em>Empty</em>
+                    </xsl:when>
+					<xsl:when test="exists(xs:complexType)">
+						<xsl:text>xs:complexType</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="@type" />
+					</xsl:otherwise>
+				</xsl:choose>
+			</td>
+			<td>
+				<xsl:value-of select="$cardinality" />
+			</td>
+			<td>
+				<xsl:variable name="extra-doc">
+					<xsl:if test="@name = $expanded-nodes/html:nodes/html:node">
+						<xsl:text>*Note:* This is a nested repeating structure
+
+</xsl:text>
+					</xsl:if>
+				</xsl:variable>
+				<xsl:call-template name="output-content">
+					<xsl:with-param name="content"
+						select="concat($extra-doc, xs:annotation/xs:documentation)" />
+					<xsl:with-param name="section" select="$section" />
+				</xsl:call-template>
+			</td>
+		</tr>
+		<xsl:if test="not(@name = $expanded-nodes/html:nodes/html:node)">
+			<xsl:message>
+				<xsl:value-of select="@name" />
+				<xsl:text> not in visited list</xsl:text>
+			</xsl:message>
+			<xsl:if test="exists(@type)">
+				<xsl:apply-templates select="docorro:get-type(@type,.)">
+					<xsl:with-param name="indent"
+						select="concat($indent, '&#160;&#160;&#160;&#160;')" />
+					<xsl:with-param name="section" select="$section" />
+					<xsl:with-param name="minOccurs" select="@minOccurs" />
+					<xsl:with-param name="maxOccurs" select="@maxOccurs" />
+					<xsl:with-param name="expanded-nodes">
+						<nodes>
+							<xsl:copy-of select="$expanded-nodes/html:nodes/html:node" />
+							<node>
+								<xsl:value-of select="@name" />
+							</node>
+						</nodes>
+					</xsl:with-param>
+				</xsl:apply-templates>
+			</xsl:if>
+			<xsl:apply-templates select="*">
+				<xsl:with-param name="indent"
+					select="concat($indent, '&#160;&#160;&#160;&#160;')" />
+				<xsl:with-param name="section" select="$section" />
+				<xsl:with-param name="expanded-nodes">
+					<nodes>
+						<xsl:copy-of select="$expanded-nodes/html:nodes/html:node" />
+						<node>
+							<xsl:value-of select="@name" />
+						</node>
+					</nodes>
+				</xsl:with-param>
+			</xsl:apply-templates>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="xs:element[exists(@ref)]">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<xsl:param name="minOccurs" />
+		<xsl:param name="maxOccurs" />
+		<xsl:param name="expanded-nodes" />
+		<xsl:apply-templates select="docorro:get-element(@ref,.)">
+			<xsl:with-param name="indent" select="$indent" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="minOccurs" select="@minOccurs" />
+			<xsl:with-param name="maxOccurs" select="@maxOccurs" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
+	</xsl:template>
+
 	<xsl:template match="xs:simpleType">
 		<xsl:variable name="section" select="@name" />
-		<h3 id="{tibant:convert-to-id($section)}">
+		<h3 id="{docorro:convert-to-id($section)}">
 			<xsl:value-of select="$section" />
 		</h3>
 		<xsl:call-template name="output-content">
@@ -832,319 +927,163 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		</table>
 	</xsl:template>
 
-	<xsl:template name="output-complex-type">
-		<xsl:param name="type" />
+	<xsl:template match="xs:complexType">
 		<xsl:param name="indent" />
-		<xsl:param name="doc" />
 		<xsl:param name="section" />
-		<xsl:message>
-			<xsl:text>Outputting </xsl:text>
-			<xsl:value-of select="$type/@name" />
-		</xsl:message>
-		<xsl:for-each select="$type/xs:complexContent/xs:extension">
-			<xsl:message>
-				<xsl:text>  </xsl:text>
-				<xsl:value-of select="$type/@name" />
-				<xsl:text> extends </xsl:text>
-				<xsl:value-of select="@base" />
-			</xsl:message>
-			<xsl:variable name="etype"
-				select="tibant:get-type(./@base,$type,$doc/wsdl:types/xs:schema)" />
-			<xsl:message>
-				<xsl:text>    type name:</xsl:text>
-				<xsl:value-of select="name($type)" />
-			</xsl:message>
-			<xsl:call-template name="output-complex-type">
-				<xsl:with-param name="type" select="$etype" />
-				<xsl:with-param name="indent" select="$indent" />
-				<xsl:with-param name="doc" select="$doc" />
-				<xsl:with-param name="section" select="$section" />
-			</xsl:call-template>
-		</xsl:for-each>
-		<xsl:for-each select="$type//xs:sequence/xs:element">
-			<xsl:choose>
-				<xsl:when test="exists(@ref)">
-					<xsl:variable name="el"
-						select="tibant:get-element(@ref,.,$doc/wsdl:types/xs:schema)" />
-					<xsl:message>
-						Ref Element:
-						<xsl:value-of select="@ref" />
-					</xsl:message>
-					<xsl:variable name="subtype"
-						select="tibant:get-type($el/@type,$el,$doc/wsdl:types/xs:schema)" />
-					<tr>
-						<xsl:variable name="cardnality">
-							<xsl:choose>
-								<xsl:when test="exists(@minOccurs)">
-									<xsl:value-of select="@minOccurs" />
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:text>1</xsl:text>
-								</xsl:otherwise>
-							</xsl:choose>
-							<xsl:text>..</xsl:text>
-							<xsl:choose>
-								<xsl:when test="@maxOccurs = 'unbounded'">
-									<xsl:text>*</xsl:text>
-								</xsl:when>
-								<xsl:when test="exists(@maxOccurs)">
-									<xsl:value-of select="@maxOccurs" />
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:text>1</xsl:text>
-								</xsl:otherwise>
-							</xsl:choose>
-
-						</xsl:variable>
-						<td>
-							<xsl:choose>
-								<xsl:when test="not(starts-with($cardnality,'0'))">
-									<strong>
-										<xsl:value-of select="$indent" />
-										<xsl:value-of select="$el/@name" />
-									</strong>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="$indent" />
-									<xsl:value-of select="$el/@name" />
-								</xsl:otherwise>
-							</xsl:choose>
-						</td>
-						<td>
-							<xsl:value-of select="$subtype/@name" />
-						</td>
-						<td>
-							<xsl:value-of select="$cardnality" />
-						</td>
-						<td>
-							<xsl:call-template name="output-content">
-								<xsl:with-param name="content"
-									select="xs:annotation/xs:documentation" />
-								<xsl:with-param name="section" select="$section" />
-							</xsl:call-template>
-						</td>
-					</tr>
-					<xsl:if test="name($subtype)='xs:complexType'">
-						<xsl:call-template name="output-complex-type">
-							<xsl:with-param name="type" select="$subtype" />
-							<xsl:with-param name="indent"
-								select="concat($indent,'&#160;&#160;&#160;&#160;')" />
-							<xsl:with-param name="doc" select="$doc" />
-							<xsl:with-param name="section" select="$section" />
-						</xsl:call-template>
-					</xsl:if>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:variable name="subtype"
-						select="tibant:get-type(@type,.,$doc/wsdl:types/xs:schema)" />
-					<tr>
-						<xsl:variable name="cardnality">
-							<xsl:choose>
-								<xsl:when test="exists(@minOccurs)">
-									<xsl:value-of select="@minOccurs" />
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:text>1</xsl:text>
-								</xsl:otherwise>
-							</xsl:choose>
-							<xsl:text>..</xsl:text>
-							<xsl:choose>
-								<xsl:when test="@maxOccurs = 'unbounded'">
-									<xsl:text>*</xsl:text>
-								</xsl:when>
-								<xsl:when test="exists(@maxOccurs)">
-									<xsl:value-of select="@maxOccurs" />
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:text>1</xsl:text>
-								</xsl:otherwise>
-							</xsl:choose>
-
-						</xsl:variable>
-						<td>
-							<xsl:choose>
-								<xsl:when test="not(starts-with($cardnality,'0'))">
-									<strong>
-										<xsl:value-of select="$indent" />
-										<xsl:value-of select="@name" />
-									</strong>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="$indent" />
-									<xsl:value-of select="@name" />
-								</xsl:otherwise>
-							</xsl:choose>
-						</td>
-						<td>
-							<xsl:value-of select="@type" />
-						</td>
-						<td>
-							<xsl:value-of select="$cardnality" />
-						</td>
-						<td>
-							<xsl:call-template name="output-content">
-								<xsl:with-param name="content"
-									select="xs:annotation/xs:documentation" />
-								<xsl:with-param name="section" select="$section" />
-							</xsl:call-template>
-						</td>
-					</tr>
-					<xsl:if test="name($subtype)='xs:complexType'">
-						<xsl:call-template name="output-complex-type">
-							<xsl:with-param name="type" select="$subtype" />
-							<xsl:with-param name="indent"
-								select="concat($indent,'&#160;&#160;&#160;&#160;')" />
-							<xsl:with-param name="doc" select="$doc" />
-							<xsl:with-param name="section" select="$section" />
-						</xsl:call-template>
-					</xsl:if>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:for-each>
-		<xsl:for-each select="$type//xs:choice/xs:element">
-			<xsl:choose>
-				<xsl:when test="exists(@ref)">
-					<xsl:variable name="el"
-						select="tibant:get-element(@ref,.,$doc/wsdl:types/xs:schema)" />
-					<xsl:message>
-						Ref Element:
-						<xsl:value-of select="@ref" />
-					</xsl:message>
-					<xsl:variable name="subtype"
-						select="tibant:get-type($el/@type,$el,$doc/wsdl:types/xs:schema)" />
-					<tr>
-						<td>
-							<xsl:value-of select="$indent" />
-							<xsl:value-of select="$el/@name" />
-						</td>
-						<td>
-							<xsl:value-of select="$subtype/@name" />
-						</td>
-						<td>
-							<xsl:text>choice</xsl:text>
-						</td>
-						<td>
-							<xsl:variable name="choice-msg">
-								<xsl:choose>
-									<xsl:when test="count(../xs:element) > 2">
-										<xsl:text>One of the following must be included:
-</xsl:text>
-										<xsl:for-each select="../xs:element">
-											<xsl:text> * </xsl:text>
-											<xsl:value-of select="@name" />
-										</xsl:for-each>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:text>Either </xsl:text>
-										<xsl:value-of select="../xs:element[1]/@name" />
-										<xsl:text> or </xsl:text>
-										<xsl:value-of select="../xs:element[2]/@name" />
-										<xsl:text> must be included.
-</xsl:text>
-									</xsl:otherwise>
-								</xsl:choose>
-								<xsl:text></xsl:text>
-							</xsl:variable>
-							<xsl:call-template name="output-content">
-								<xsl:with-param name="content"
-									select="concat($choice-msg, xs:annotation/xs:documentation)" />
-								<xsl:with-param name="section" select="$section" />
-							</xsl:call-template>
-						</td>
-					</tr>
-					<xsl:if test="name($subtype)='xs:complexType'">
-						<xsl:call-template name="output-complex-type">
-							<xsl:with-param name="type" select="$subtype" />
-							<xsl:with-param name="indent"
-								select="concat($indent,'&#160;&#160;&#160;&#160;')" />
-							<xsl:with-param name="doc" select="$doc" />
-							<xsl:with-param name="section" select="$section" />
-						</xsl:call-template>
-					</xsl:if>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:variable name="subtype"
-						select="tibant:get-type(@type,.,$doc/wsdl:types/xs:schema)" />
-					<tr>
-						<td>
-							<xsl:value-of select="$indent" />
-							<xsl:value-of select="@name" />
-						</td>
-						<td>
-							<xsl:value-of select="@type" />
-						</td>
-						<td>
-							<xsl:text>choice</xsl:text>
-						</td>
-						<td>
-							<xsl:variable name="choice-msg">
-								<xsl:choose>
-									<xsl:when test="count(../xs:element) > 2">
-										<xsl:text>One of the following must be included:
-</xsl:text>
-										<xsl:for-each select="../xs:element">
-											<xsl:text> * </xsl:text>
-											<xsl:value-of select="@name" />
-										</xsl:for-each>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:text>Either </xsl:text>
-										<xsl:value-of select="../xs:element[1]/@name" />
-										<xsl:text> or </xsl:text>
-										<xsl:value-of select="../xs:element[2]/@name" />
-										<xsl:text> must be included.
-</xsl:text>
-									</xsl:otherwise>
-								</xsl:choose>
-								<xsl:text></xsl:text>
-							</xsl:variable>
-							<xsl:call-template name="output-content">
-								<xsl:with-param name="content"
-									select="concat($choice-msg, xs:annotation/xs:documentation)" />
-								<xsl:with-param name="section" select="$section" />
-							</xsl:call-template>
-						</td>
-					</tr>
-					<xsl:if test="name($subtype)='xs:complexType'">
-						<xsl:call-template name="output-complex-type">
-							<xsl:with-param name="type" select="$subtype" />
-							<xsl:with-param name="indent"
-								select="concat($indent,'&#160;&#160;&#160;&#160;')" />
-							<xsl:with-param name="doc" select="$doc" />
-							<xsl:with-param name="section" select="$section" />
-						</xsl:call-template>
-					</xsl:if>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:for-each>
+		<xsl:param name="expanded-nodes" />
+		<xsl:apply-templates select="xs:attribute">
+			<xsl:with-param name="indent" select="$indent" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
+        <xsl:apply-templates select="*[name() != 'xs:attribute']">
+            <xsl:with-param name="indent" select="$indent" />
+            <xsl:with-param name="section" select="$section" />
+            <xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+        </xsl:apply-templates>
 	</xsl:template>
 
-	<!--
-		xsl:template name="output-element"> <xsl:param name="element" />
-		<xsl:param name="indent" /> <xsl:param name="doc" /> <xsl:param
-		name="section" /> <xsl:message> <xsl:text>Outputting </xsl:text>
-		<xsl:value-of select="$element/@name" /> </xsl:message> <xsl:variable
-		name="subtype"
-		select="tibant:get-type(@type,.,$doc/wsdl:types/xs:schema)" /> <tr>
-		<xsl:variable name="cardnality"> <xsl:choose> <xsl:when
-		test="exists(@minOccurs)"> <xsl:value-of select="@minOccurs" />
-		</xsl:when> <xsl:otherwise> <xsl:text>1</xsl:text> </xsl:otherwise>
-		</xsl:choose> <xsl:text>..</xsl:text> <xsl:choose> <xsl:when
-		test="@maxOccurs = 'unbounded'"> <xsl:text>*</xsl:text> </xsl:when>
-		<xsl:when test="exists(@maxOccurs)"> <xsl:value-of select="@maxOccurs"
-		/> </xsl:when> <xsl:otherwise> <xsl:text>1</xsl:text> </xsl:otherwise>
-		</xsl:choose> </xsl:variable> <td> <xsl:choose> <xsl:when
-		test="not(starts-with($cardnality,'0'))"> <strong> <xsl:value-of
-		select="$indent" /> <xsl:value-of select="@name" /> </strong>
-		</xsl:when> <xsl:otherwise> <xsl:value-of select="$indent" />
-		<xsl:value-of select="@name" /> </xsl:otherwise> </xsl:choose> </td>
-		<td> <xsl:value-of select="@type" /> </td> <td> <xsl:value-of
-		select="$cardnality" /> </td> <td> <xsl:call-template
-		name="output-content"> <xsl:with-param name="content"
-		select="xs:annotation/xs:documentation" /> <xsl:with-param
-		name="section" select="$section" /> </xsl:call-template> </td> </tr>
-		</xsl:template
-	-->
+	<xsl:template match="xs:complexContent">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<xsl:param name="expanded-nodes" />
+		<xsl:apply-templates select="*">
+			<xsl:with-param name="indent" select="$indent" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="xs:sequence">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<xsl:param name="expanded-nodes" />
+		<xsl:apply-templates select="*">
+			<xsl:with-param name="indent" select="$indent" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="xs:choice">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<xsl:param name="expanded-nodes" />
+		<tr>
+			<td>
+				<xsl:value-of select="$indent" />
+				<xsl:for-each select="xs:element">
+					<xsl:value-of select="@name | @ref" />
+					<xsl:if test="position() != last()">
+						<xsl:text> | </xsl:text>
+					</xsl:if>
+				</xsl:for-each>
+			</td>
+			<td>
+				<xsl:text>xs:choice</xsl:text>
+			</td>
+			<td></td>
+			<td>
+				<xsl:call-template name="output-content">
+					<xsl:with-param name="content"
+						select="xs:annotation/xs:documentation" />
+					<xsl:with-param name="section" select="$section" />
+				</xsl:call-template>
+			</td>
+		</tr>
+		<xsl:apply-templates select="*">
+			<xsl:with-param name="indent" select="$indent" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="xs:extension">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<xsl:param name="expanded-nodes" />
+		<xsl:apply-templates select="docorro:get-type(@base,.)">
+			<xsl:with-param name="indent" select="$indent" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
+		<xsl:apply-templates select="xs:attribute">
+			<xsl:with-param name="indent" select="$indent" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
+		<xsl:apply-templates select="*[name() != 'xs:attribute']">
+			<xsl:with-param name="indent" select="$indent" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="xs:any">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<tr>
+			<xsl:variable name="cardinality" select="docorro:get-cardinality(.,'','')" />
+			<td>
+				<xsl:if test="not(starts-with($cardinality,'0'))">
+					<xsl:attribute name="class">required</xsl:attribute>
+				</xsl:if>
+				<xsl:value-of select="$indent" />
+				<xsl:text>*</xsl:text>
+			</td>
+			<td>
+				<xsl:text>xs:any</xsl:text>
+			</td>
+			<td>
+			</td>
+			<td>
+				<xsl:call-template name="output-content">
+					<xsl:with-param name="content"
+						select="xs:annotation/xs:documentation" />
+					<xsl:with-param name="section" select="$section" />
+				</xsl:call-template>
+			</td>
+		</tr>
+	</xsl:template>
+
+	<xsl:template match="*" priority="-1">
+		<xsl:message terminate="yes">
+			<xsl:text>Unknown element
+</xsl:text>
+			<xsl:copy-of select="." />
+		</xsl:message>
+	</xsl:template>
+
+
+	<xsl:template match="xs:attribute">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<tr>
+			<xsl:variable name="cardinality">
+			</xsl:variable>
+			<td>
+				<xsl:if test="not(starts-with($cardinality,'0'))">
+					<xsl:attribute name="class">required</xsl:attribute>
+				</xsl:if>
+				<xsl:value-of select="$indent" />
+				<xsl:text>@</xsl:text>
+				<xsl:value-of select="@name" />
+			</td>
+			<td>
+				<xsl:value-of select="@type" />
+			</td>
+			<td>
+				<xsl:value-of select="$cardinality" />
+			</td>
+			<td>
+				<xsl:call-template name="output-content">
+					<xsl:with-param name="content"
+						select="xs:annotation/xs:documentation" />
+					<xsl:with-param name="section" select="$section" />
+				</xsl:call-template>
+			</td>
+		</tr>
+	</xsl:template>
 
 	<xsl:template name="output-content">
 		<xsl:param name="content" />
@@ -1447,7 +1386,7 @@ A CONTENT;</xsl:text>
 				<xsl:variable name="attribute"
 					select="replace($content, '(.*)@\{(.+?)\}(.*)', '$2', 's')" />
 				<a
-					href="{tibant:convert-to-id(concat('#', $section, '_',
+					href="{docorro:convert-to-id(concat('#', $section, '_',
 					$attribute))}">
 					<xsl:text>@{</xsl:text>
 					<xsl:value-of select="$attribute" />
@@ -1472,12 +1411,15 @@ A CONTENT;</xsl:text>
 					<xsl:with-param name="section" select="$section" />
 				</xsl:call-template>
 			</xsl:when>
-			<!-- macro name -->
-			<xsl:when test="exists($macros[@name=$content])">
-				<a href="{tibant:convert-to-id(concat('#', $content))}">
-					<xsl:value-of select="$content" />
-				</a>
-			</xsl:when>
+			<!--
+				macro name keeping this around because we will want to do similar
+				stuff with type names
+			-->
+			<!--
+				xsl:when test="exists($macros[@name=$content])"> <a
+				href="{docorro:convert-to-id(concat('#', $content))}"> <xsl:value-of
+				select="$content" /> </a> </xsl:when
+			-->
 			<xsl:otherwise>
 				<xsl:copy-of select="$content" />
 			</xsl:otherwise>
@@ -1533,7 +1475,7 @@ BLOCK CONTENT;</xsl:text>
 				</xsl:message>
 				<xsl:variable name="heading"
 					select="replace($content, '^== (.*) ==$', '$1')" />
-				<h2 id="{tibant:convert-to-id($heading)}">
+				<h2 id="{docorro:convert-to-id($heading)}">
 					<xsl:call-template name="inline">
 						<xsl:with-param name="content" select="$heading" />
 						<xsl:with-param name="section" select="$section" />
@@ -1547,7 +1489,7 @@ BLOCK CONTENT;</xsl:text>
 				</xsl:message>
 				<xsl:variable name="heading"
 					select="replace($content, '^=== (.*) ===$', '$1')" />
-				<h3 id="{tibant:convert-to-id($heading)}">
+				<h3 id="{docorro:convert-to-id($heading)}">
 					<xsl:call-template name="inline">
 						<xsl:with-param name="content" select="$heading" />
 						<xsl:with-param name="section" select="$section" />
@@ -1761,50 +1703,110 @@ BLOCK CONTENT;</xsl:text>
 		</table>
 	</xsl:template>
 
-	<xsl:function name="tibant:convert-to-id">
+	<xsl:function name="docorro:convert-to-id">
 		<xsl:param name="id" />
 		<xsl:value-of select="replace(replace($id, ' ', '_'), '^-', 'a-')" />
 	</xsl:function>
 
-	<xsl:function name="tibant:doc-name">
+	<xsl:function name="docorro:doc-name">
 		<xsl:text>Interface Specification</xsl:text>
 	</xsl:function>
 
 
-	<xsl:function name="tibant:namespace">
+	<xsl:function name="docorro:namespace">
 		<xsl:param name="type" />
 		<xsl:param name="doc" />
 		<xsl:variable name="prefix" select="replace($type, ':.*', '')" />
 		<xsl:variable name="namespace" select="$doc/namespace::*[name()=$prefix]" />
-		<xsl:message>
-			<xsl:text>namespace for </xsl:text>
-			<xsl:value-of select="$prefix" />
-			<xsl:text> is </xsl:text>
-			<xsl:value-of select="$doc/namespace::*[name()=$prefix]" />
-		</xsl:message>
+		<!--
+			xsl:message> <xsl:text>namespace for </xsl:text> <xsl:value-of
+			select="$prefix" /> <xsl:text> is </xsl:text> <xsl:value-of
+			select="$doc/namespace::*[name()=$prefix]" /> </xsl:message
+		-->
 		<xsl:value-of select="$doc/namespace::*[name()=$prefix]" />
 	</xsl:function>
 
-	<xsl:function name="tibant:get-type">
+	<xsl:function name="docorro:get-type">
 		<xsl:param name="type" />
 		<xsl:param name="doc" />
-		<xsl:param name="schemas" />
-		<xsl:variable name="namespace" select="tibant:namespace($type,$doc)" />
 		<xsl:message>
-			<xsl:text>found ns </xsl:text>
+			<xsl:text>Getting type </xsl:text>
+			<xsl:value-of select="$type" />
+		</xsl:message>
+		<xsl:variable name="namespace" select="docorro:namespace($type,$doc)" />
+		<xsl:message>
+			<xsl:text>    </xsl:text>
+			<xsl:value-of select="$type" />
+			<xsl:text> has a ns of </xsl:text>
 			<xsl:value-of select="$namespace" />
 		</xsl:message>
+		<xsl:message>
+			<xsl:copy-of
+				select="$type-catalogue/xs:schema[@targetNamespace=$namespace]/xs:complexType[@name=replace($type,'.*:','')]" />
+		</xsl:message>
 		<xsl:copy-of
-			select="$schemas[@targetNamespace=$namespace]/xs:complexType[@name=replace($type,'.*:','')]" />
+			select="$type-catalogue/xs:schema[@targetNamespace=$namespace]/xs:complexType[@name=replace($type,'.*:','')]" />
 	</xsl:function>
 
-	<xsl:function name="tibant:get-element">
+	<xsl:function name="docorro:get-element">
 		<xsl:param name="type" />
 		<xsl:param name="doc" />
-		<xsl:param name="schemas" />
-		<xsl:variable name="namespace" select="tibant:namespace($type,$doc)" />
+		<xsl:variable name="namespace" select="docorro:namespace($type,$doc)" />
+		<xsl:message>
+			<xsl:text>Getting element </xsl:text>
+			<xsl:value-of select="$type" />
+		</xsl:message>
+		<xsl:variable name="namespace" select="docorro:namespace($type,$doc)" />
+		<xsl:message>
+			<xsl:text>    </xsl:text>
+			<xsl:value-of select="$type" />
+			<xsl:text> has a ns of </xsl:text>
+			<xsl:value-of select="$namespace" />
+		</xsl:message>
+		<xsl:message>
+			<xsl:copy-of
+				select="$type-catalogue/xs:schema[@targetNamespace=$namespace]/xs:element[@name=replace($type,'.*:','')]" />
+		</xsl:message>
 		<xsl:copy-of
-			select="$schemas[@targetNamespace=$namespace]/xs:element[@name=replace($type,'.*:','')]" />
+			select="$type-catalogue/xs:schema[@targetNamespace=$namespace]/xs:element[@name=replace($type,'.*:','')]" />
+	</xsl:function>
+
+	<xsl:function name="docorro:get-cardinality">
+		<xsl:param name="element" />
+		<xsl:param name="minOccurs" />
+		<xsl:param name="maxOccurs" />
+		<xsl:variable name="cardinality">
+			<xsl:choose>
+				<xsl:when test="$minOccurs != ''">
+					<xsl:value-of select="$minOccurs" />
+				</xsl:when>
+				<xsl:when test="exists($element/@minOccurs)">
+					<xsl:value-of select="$element/@minOccurs" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>1</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:text>..</xsl:text>
+			<xsl:choose>
+				<xsl:when test="$maxOccurs = 'unbounded'">
+					<xsl:text>*</xsl:text>
+				</xsl:when>
+				<xsl:when test="$maxOccurs != ''">
+					<xsl:value-of select="$maxOccurs" />
+				</xsl:when>
+				<xsl:when test="$element/@maxOccurs = 'unbounded'">
+					<xsl:text>*</xsl:text>
+				</xsl:when>
+				<xsl:when test="exists($element/@maxOccurs)">
+					<xsl:value-of select="$element/@maxOccurs" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>1</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:value-of select="$cardinality" />
 	</xsl:function>
 
 </xsl:stylesheet>

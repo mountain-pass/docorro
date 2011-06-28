@@ -8,7 +8,7 @@
     <import file="../../../build.xml" />
 
 
-    <target name="run-test" depends="-load-ant-contrib">
+    <target name="create-doc" depends="-load-ant-contrib">
         <mkdir dir="build" />
         <docorro:xslt in="src/test/quick/data/BWUnit.wsdl"
                       out="build/BWUnit.html"
@@ -21,6 +21,9 @@
             </condition>
         </fail>
         <docorro:validate-xhtml file="build/BWUnit.html" />
+    </target>
+
+    <target name="validate-doc" depends="create-doc">
         <docorro:schematron schema="src/test/quick/data/BWUnit.sch"
                             in="build/BWUnit.html"
                             out="build/BWUnit.svrl" />
@@ -40,4 +43,6 @@
             </condition>
         </fail>
     </target>
+
+    <target name="run-test" depends="validate-doc"/>
 </project>
