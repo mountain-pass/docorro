@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info
+        organisation="org.windyroad"
+        module="tibant"
+        status="release"/>
+	<publications>
+	</publications>
+	<dependencies>
+		<dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" transitive="false"/>
+        <dependency org="net.sourceforge.saxon" name="saxon-he" rev="9.3.0.4" transitive="true"/>
+        <dependency org="org.apache.ant" name="ant-antunit" rev="1.1"/>
+	</dependencies>
+</ivy-module>
