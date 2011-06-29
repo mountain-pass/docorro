@@ -9,7 +9,7 @@
 
 
     <target name="create-doc" depends="-load-ant-contrib">
-        <mkdir dir="build" />
+        <mkdir dir="build/quick" />
         <docorro:xslt in="src/test/quick/data/Book247XMLWebService.wsdl"
                       out="build/Book247XMLWebService.html"
                       style="${docorro.xslt}" />
@@ -37,7 +37,7 @@
         <docorro:svrl-2-junit in="build/Book247XMLWebService.svrl" out="build/Book247XMLWebService.junit" />
         <fail message="Schematron Failure">
             <condition>
-                <isfileselected file="build/Book247XMLWebService.junit">
+                <isfileselected file="build/quick/Book247XMLWebService.junit">
                     <containsregexp expression="&lt;error " />
                 </isfileselected>
             </condition>

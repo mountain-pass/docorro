@@ -9,7 +9,7 @@
 
 
     <target name="create-doc" depends="-load-ant-contrib">
-        <mkdir dir="build" />
+        <mkdir dir="build/pending" />
         <docorro:xslt in="src/test/quick/data/moneta.wsdl"
                       out="build/moneta.html"
                       style="${docorro.xslt}" />
@@ -37,7 +37,7 @@
         <docorro:svrl-2-junit in="build/moneta.svrl" out="build/moneta.junit" />
         <fail message="Schematron Failure">
             <condition>
-                <isfileselected file="build/moneta.junit">
+                <isfileselected file="build/pending/moneta.junit">
                     <containsregexp expression="&lt;error " />
                 </isfileselected>
             </condition>
