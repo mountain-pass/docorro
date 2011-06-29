@@ -9,7 +9,7 @@
 
 
     <target name="create-doc" depends="-load-ant-contrib">
-        <mkdir dir="build" />
+        <mkdir dir="build/quick" />
         <docorro:xslt in="src/test/quick/data/CustomerEBF_Inquiry.wsdl"
                       out="build/CustomerEBF_Inquiry.html"
                       style="${docorro.xslt}" />
@@ -37,7 +37,7 @@
         <docorro:svrl-2-junit in="build/CustomerEBF_Inquiry.svrl" out="build/CustomerEBF_Inquiry.junit" />
         <fail message="Schematron Failure">
             <condition>
-                <isfileselected file="build/CustomerEBF_Inquiry.junit">
+                <isfileselected file="build/quick/CustomerEBF_Inquiry.junit">
                     <containsregexp expression="&lt;error " />
                 </isfileselected>
             </condition>

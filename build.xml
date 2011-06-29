@@ -244,37 +244,51 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
             description="just something to get started"
             depends="run-tests" />
 
+    <property name="docorro.xslt" location="src/xslt/docorro.xslt" />
+
+    <macrodef name="run-tests" uri="org.windyroad.docorro">
+        <attribute name="phase" />
+        <sequential>
+            <subant target="run-test">
+                <fileset refid="@{phase}-tests" />
+            </subant>
+
+            <!-- find out how many tests we have -->
+            <resourcecount property="@{phase}.test.file.count">
+                <fileset refid="@{phase}-tests" />
+            </resourcecount>
+
+            <!-- just make sure we have results for each test -->
+            <fail message="the number of test results does not match the number of test files">
+                <condition>
+                    <resourcecount when="ne" count="${@{phase}.test.file.count}">
+                        <fileset dir="build/@{phase}/" includes="*.junit" />
+                    </resourcecount>
+                </condition>
+            </fail>
+        </sequential>
+    </macrodef>
+
     <fileset id="quick-tests"
              dir="src/test/quick"
              includes="*.xml"
              excludes="moneta.xml" />
-    <fileset id="pending-tests" dir="src/test/quick" includes="moneta.xml" />
-    <property name="docorro.xslt" location="src/xslt/docorro.xslt" />
+    <fileset id="pending-tests" dir="src/test" includes="quick/moneta.xml,slow/ebaySvc.xml" />
+    <fileset id="slow-tests"
+             dir="src/test/slow"
+             includes="*.xml"
+             excludes="ebaySvc.xml"/>
 
     <target name="run-tests" description="Run tests" depends="">
-        <subant target="run-test">
-            <fileset refid="quick-tests" />
-        </subant>
-
-        <!-- find out how many tests we have -->
-        <resourcecount property="quick.test.file.count">
-            <fileset refid="quick-tests" />
-        </resourcecount>
-
-        <!-- just make sure we have results for each test -->
-        <fail message="the number of test results does not match the number of test files">
-            <condition>
-                <resourcecount when="ne" count="${quick.test.file.count}">
-                    <fileset dir="build" includes="*.junit" />
-                </resourcecount>
-            </condition>
-        </fail>
+        <docorro:run-tests phase="quick"/>
     </target>
 
     <target name="run-pending-tests" description="Run tests" depends="">
-        <subant target="run-test">
-            <fileset refid="pending-tests" />
-        </subant>
+        <docorro:run-tests phase="pending"/>
+    </target>
+
+    <target name="run-slow-tests" description="Run tests" depends="">
+        <docorro:run-tests phase="slow"/>
     </target>
 
 </project>
