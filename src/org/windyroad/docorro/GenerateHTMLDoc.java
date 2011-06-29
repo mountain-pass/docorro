@@ -69,7 +69,7 @@ public class GenerateHTMLDoc {
 			StringBuffer fileData = new StringBuffer(1000);
 			//Using the classLoader to get the file in the Classes
 			//This method allow us to read the file from any web server
-			InputStream uploadFileIS = GenerateHTMLDoc.class.getClassLoader().getResourceAsStream("UploadFile.html");
+			InputStream uploadFileIS = GenerateHTMLDoc.class.getClassLoader().getResourceAsStream("/test/quick/UploadFile.html");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(uploadFileIS));
 			//Tomcat use this
 			//BufferedReader reader = new BufferedReader(new FileReader("../UploadFile.html"));
