@@ -44,14 +44,14 @@
     <target name="clean-libs" description="">
         <delete dir="lib" />
     </target>
-	
-	<target name="WAR" description="Generate WAR file for deployment">
-		<war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
-			<lib dir="WebContent/WEB-INF/lib"/>
-			<classes dir="build/classes">
-			</classes>
-		</war>
-	</target>
+
+    <target name="WAR" description="Generate WAR file for deployment">
+        <war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
+            <lib dir="WebContent/WEB-INF/lib" />
+            <classes dir="build/classes">
+            </classes>
+        </war>
+    </target>
 
     <target name="build" depends="" description="" />
 
@@ -234,7 +234,9 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
             <docorro:schematron-compile in="${@{schema}.patterns}"
                                         out="${@{schema}.xslt}" />
 
-            <docorro:xslt style="${@{schema}.xslt}" in="@{in}" out="@{out}" />
+            <docorro:xslt style="${@{schema}.xslt}" in="@{in}" out="@{out}">
+                <arg value="diagnose=true" />
+            </docorro:xslt>
         </sequential>
     </macrodef>
 
@@ -242,22 +244,23 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
             description="just something to get started"
             depends="run-tests" />
 
-    <fileset id="quick-tests" dir="src/test/quick" includes="*.xml" excludes="moneta.xml"/>
-    <fileset id="pending-tests" dir="src/test/quick" includes="moneta.xml"/>
-    <property name="docorro.xslt" location="src/xslt/docorro.xslt"/>
-        
-    <target name="run-tests"
-            description="Run tests"
-            depends="">
+    <fileset id="quick-tests"
+             dir="src/test/quick"
+             includes="*.xml"
+             excludes="moneta.xml" />
+    <fileset id="pending-tests" dir="src/test/quick" includes="moneta.xml" />
+    <property name="docorro.xslt" location="src/xslt/docorro.xslt" />
+
+    <target name="run-tests" description="Run tests" depends="">
         <subant target="run-test">
             <fileset refid="quick-tests" />
         </subant>
-        
+
         <!-- find out how many tests we have -->
         <resourcecount property="quick.test.file.count">
             <fileset refid="quick-tests" />
         </resourcecount>
-        
+
         <!-- just make sure we have results for each test -->
         <fail message="the number of test results does not match the number of test files">
             <condition>
@@ -268,9 +271,7 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
         </fail>
     </target>
 
-    <target name="run-pending-tests"
-            description="Run tests"
-            depends="">
+    <target name="run-pending-tests" description="Run tests" depends="">
         <subant target="run-test">
             <fileset refid="pending-tests" />
         </subant>

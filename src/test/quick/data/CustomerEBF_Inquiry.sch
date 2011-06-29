@@ -6,6 +6,9 @@
             <assert test=". = 'Untitled - WSDL Interface Specification'">
                 The title is wrong
             </assert>
+            <report test=". = 'Untitled - WSDL Interface Specification'">
+                The title is right
+            </report>
         </rule>
     </pattern>
 </schema>
