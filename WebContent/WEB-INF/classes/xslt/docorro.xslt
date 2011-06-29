@@ -1,9 +1,9 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<xsl:stylesheet exclude-result-prefixes="xsl xs docorro html wsdl"
+<xsl:stylesheet exclude-result-prefixes="xsl xs docorro html wsdl SOAP-ENC"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:docorro="http://windyroad.org/docorro/functions" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-	version="2.0">
+	xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" version="2.0">
 	<xsl:output method="xml" omit-xml-declaration="no" indent="yes"
 		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
 		doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" />
@@ -671,7 +671,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			</tbody>
 		</table>
 		<xsl:call-template name="output-content">
-			<xsl:with-param name="content" select="wsdl:documentation" />
+			<xsl:with-param name="content" select="wsdl:documentation/(*|text())" />
 			<xsl:with-param name="section" select="$section" />
 		</xsl:call-template>
 		<h4>Messages</h4>
@@ -813,23 +813,22 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			</td>
 			<td>
 				<xsl:call-template name="output-content">
-					<xsl:with-param name="content"
-						select="wsdl:documentation" />
+					<xsl:with-param name="content" select="wsdl:documentation/(*|text())" />
 					<xsl:with-param name="section" select="$section" />
 				</xsl:call-template>
 			</td>
 		</tr>
-        <xsl:variable name="parttype" select="docorro:get-type(@type,.)" />
-        <xsl:message>
-            <xsl:copy-of select="$parttype" />
-        </xsl:message>
-        <xsl:apply-templates select="$parttype">
-            <xsl:with-param name="indent" select="'&#160;&#160;&#160;&#160;'" />
-            <xsl:with-param name="section" select="$section" />
-            <xsl:with-param name="expanded-nodes">
-                <nodes />
-            </xsl:with-param>
-        </xsl:apply-templates>
+		<xsl:variable name="parttype" select="docorro:get-type(@type,.)" />
+		<xsl:message>
+			<xsl:copy-of select="$parttype" />
+		</xsl:message>
+		<xsl:apply-templates select="$parttype">
+			<xsl:with-param name="indent" select="'&#160;&#160;&#160;&#160;'" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes">
+				<nodes />
+			</xsl:with-param>
+		</xsl:apply-templates>
 	</xsl:template>
 
 
@@ -999,7 +998,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			<xsl:value-of select="$section" />
 		</h3>
 		<xsl:call-template name="output-content">
-			<xsl:with-param name="content" select="wsdl:documentation" />
+			<xsl:with-param name="content" select="wsdl:documentation/(*|text())" />
 			<xsl:with-param name="section" select="$section" />
 		</xsl:call-template>
 		<table>
@@ -1104,7 +1103,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="xs:extension | xs:restriction">
+	<xsl:template match="xs:extension">
 		<xsl:param name="indent" />
 		<xsl:param name="section" />
 		<xsl:param name="expanded-nodes" />
@@ -1124,6 +1123,35 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			<xsl:with-param name="section" select="$section" />
 			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
 		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template
+		match="xs:restriction[@base='SOAP-ENC:Array' and exists(xs:attribute/@wsdl:arrayType)]">
+		<xsl:param name="indent" />
+		<xsl:param name="section" />
+		<xsl:param name="expanded-nodes" />
+		<tr>
+			<td>
+			 <xsl:value-of select="$indent"/>
+			 <em>array</em>
+			</td>
+			<td>
+				<xsl:value-of select="replace(xs:attribute/@wsdl:arrayType, '\[\]', '')" />
+			</td>
+			<td>0..*</td>
+			<td>
+				<xsl:call-template name="output-content">
+					<xsl:with-param name="content"
+						select="xs:annotation/xs:documentation" />
+					<xsl:with-param name="section" select="$section" />
+				</xsl:call-template>
+			</td>
+		</tr>
+        <xsl:apply-templates select="docorro:get-type(replace(xs:attribute/@wsdl:arrayType, '\[\]', ''),.)">
+            <xsl:with-param name="indent" select="concat($indent, '&#160;&#160;&#160;&#160;')" />
+            <xsl:with-param name="section" select="$section" />
+            <xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+        </xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template match="xs:any">
