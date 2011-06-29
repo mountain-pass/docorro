@@ -44,6 +44,14 @@
     <target name="clean-libs" description="">
         <delete dir="lib" />
     </target>
+	
+	<target name="WAR" description="Generate WAR file for deployment">
+		<war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
+			<fileset dir="src/org/windyroad/docorro"/>
+			<lib dir="WebContent/WEB-INF/lib"/>
+			<classes dir="build/classes"/>
+		</war>
+	</target>
 
     <target name="build" depends="" description="" />
 
