@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="build"
+         name="Docorro-Build"
+         xmlns="antlib:org.apache.tools.ant"
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:docorro="org.windyroad.docorro">
+
+
+
+    <echo taskname="${ant.project.name}">LOADING: ${user.home}/${ant.project.name}.properties</echo>
+    <property file="${user.home}/${project.name}.properties" />
+    <echo taskname="${ant.project.name}">LOADING: ${user.home}/build.properties</echo>
+    <property file="${user.home}/build.properties" />
+    <property name="config.filename" value="${user.name}.properties" />
+    <echo taskname="${ant.project.name}">LOADING: config/${config.filename}</echo>
+    <property file="config/${config.filename}" />
+    <echo taskname="${ant.project.name}">LOADING: config/default.properties</echo>
+    <property file="config/default.properties" />
+
+    <property name="ivy.install.version" value="2.2.0" />
+    <property name="ivy.jar.dir" location="${user.home}/.ivy2/jars" />
+    <property name="ivy.jar.file"
+              location="${ivy.jar.dir}/ivy-${ivy.install.version}.jar" />
+
+    <defaultexcludes echo="false" add="**/*.hg" />
+    <defaultexcludes echo="false" add="**/*.hg/**" />
+    <defaultexcludes echo="false" add="**/*.hgtags" />
+
+    <target name="-init">
+        <mkdir dir="build" />
+        <mkdir dir="lib" />
+    </target>
+
+    <target name="clean" description="" depends="clean-build,clean-libs" />
+
+    <target name="clean-build" description="">
+        <delete dir="build" verbose="true" />
+    </target>
+
+    <target name="clean-local" description="">
+        <delete dir="${user.home}/.ivy2/local/docorro" verbose="true" />
+    </target>
+
+    <target name="clean-libs" description="">
+        <delete dir="lib" />
+    </target>
+	
+	<target name="WAR" description="Generate WAR file for deployment">
+		<war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
+			<lib dir="WebContent/WEB-INF/lib"/>
+			<classes dir="build/classes">
+			</classes>
+		</war>
+	</target>
+
+    <target name="build" depends="" description="" />
+
+    <target name="-download-ivy" unless="ivy.downloaded">
+        <mkdir dir="${ivy.jar.dir}" />
+        <!-- download Ivy from web site so that it can be used even without any special installation -->
+        <echo message="installing ivy..." />
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+             dest="${ivy.jar.file}"
+             usetimestamp="true"
+             verbose="true" />
+    </target>
+
+    <target name="-check-ivy-downloaded">
+        <condition property="ivy.downloaded">
+            <available file="${ivy.jar.file}" />
+        </condition>
+    </target>
+
+    <target name="-load-ivy"
+            depends="-check-ivy-downloaded,-download-ivy"
+            unless="ivy.loaded">
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar" />
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant"
+                 classpathref="ivy.lib.path" />
+        <property name="ivy.report.todir" location="build/ivy" />
+        <ivy:configure file="config/ivysettings.xml" />
+        <ivy:resolve file="${ivy.dep.file}" conf="${ivy.configurations}" />
+        <property name="ivy.loaded" value="true" />
+    </target>
+
+    <target name="-load-antunit" depends="retrieve" unless="antunit.loaded">
+        <taskdef uri="antlib:org.apache.ant.antunit"
+                 resource="org/apache/ant/antunit/antlib.xml">
+            <classpath>
+                <pathelement location="${ant-antunit.ant-antunit}" />
+            </classpath>
+        </taskdef>
+        <property name="antunit.loaded" value="true" />
+    </target>
+
+
+    <target name="-load-ant-contrib"
+            depends="retrieve"
+            unless="ant.contrib.loaded">
+        <property name="ant-contrib.jar.path"
+                  location="lib/ant-contrib-1.0b3.jar" />
+        <taskdef resource="net/sf/antcontrib/antlib.xml">
+            <classpath>
+                <pathelement location="${ant-contrib.jar.path}" />
+                <pathelement location="${tibco.home.tpcl}/lib/httpclient_3.0/commons-httpclient.jar" />
+                <pathelement location="${tibco.home.tpcl}/lib/commons-logging.jar" />
+                <pathelement location="${tibco.home.tpcl}/lib/commons-codec-1.3.jar" />
+            </classpath>
+        </taskdef>
+        <property name="ant.contrib.loaded" value="true" />
+    </target>
+
+    <target name="retrieve"
+            description="retrieve dependancies with ivy"
+            depends="-load-ivy">
+        <ivy:retrieve />
+        <ivy:artifactproperty name="[module].[artifact]"
+                              value="lib/[artifact]-[revision].[ext]" />
+    </target>
+
+    <macrodef name="xslt"
+              uri="org.windyroad.docorro"
+              description="Custom XSLT task using Saxon XSLT engine, to workaround Apache Ant Defect 49271 
+(https://issues.apache.org/bugzilla/show_bug.cgi?id=49271).\\
+_(Available since verison 1.4.1)_">
+        <attribute name="in"
+                   description="specifies a single XML document to be styled." />
+        <attribute name="out"
+                   description="specifies the output name for the styled result from the in attribute." />
+        <attribute name="style"
+                   description="name of the stylesheet to use - given either relative to the project's basedir or as an absolute path." />
+        <attribute name="classpath"
+                   default="${saxon-he.saxon-he}"
+                   description="the classpath to the saxon jar" />
+        <attribute name="taskname" default="tibant:xslt" />
+        <element name="params"
+                 optional="true"
+                 implicit="true"
+                 description="additional parameters to pass to saxon in 
+            the form `&lt;arg value=&quot;someparam=somevalue&quot;/&gt;`. See 
+            http://www.saxonica.com/documentation/using-xsl/commandline.xml for details" />
+        <!--
+
+==== Example ====
+
+    <tibant:xslt in="myinput.xml"
+                 out="build/myoutput.xml"
+                 style="src/xslt/mystyle.xslt">
+        <arg value="+myotherinput=myotherinput.xml" />
+        <arg value="basedir=${basedir}" />
+    </tibant:xslt>
+
+The above example applies the `src/xslt/mystyle.xslt` stylesheet against `myinput.xml`. It sets the parameter `basedir`
+to `${basedir}` and the parameter `myotherinput` to the document node of `myotherinput.xml` and writes the results to
+`build/myoutput.xml`
+
+-->
+        <sequential>
+            <property name="@{in}.location" location="@{in}" />
+            <property name="@{style}.location" location="@{style}" />
+            <property name="@{out}.location" location="@{out}" />
+            <java classname="net.sf.saxon.Transform"
+                  classpath="@{classpath}"
+                  taskname="@{taskname}"
+                  failonerror="true">
+                <classpath path="@{classpath}" />
+                <arg value="-s:${@{in}.location}" />
+                <arg value="-xsl:${@{style}.location}" />
+                <arg value="-o:${@{out}.location}" />
+                <params />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <presetdef name="validate-xhtml" uri="org.windyroad.docorro">
+        <schemavalidate>
+            <schema namespace="http://www.w3.org/XML/1998/namespace"
+                    file="src/schemas/xml.xsd" />
+            <schema namespace="http://www.w3.org/1999/xhtml"
+                    file="src/schemas/xhtml-strict.xsd" />
+            <schema namespace="http://www.w3.org/2001/XMLSchema"
+                    file="src/schemas/XMLSchema.xsd" />
+            <dtd publicId="-//W3C//DTD XHTML 1.0 Strict//EN"
+                 location="src/schemas/xhtml1-strict.dtd" />
+            <dtd publicId="-//W3C//ENTITIES Latin 1 for XHTML//EN"
+                 location="src/schemas/xhtml-lat1.ent" />
+            <dtd publicId="-//W3C//ENTITIES Symbols for XHTML//EN"
+                 location="src/schemas/xhtml-symbol.ent" />
+            <dtd publicId="-//W3C//ENTITIES Special for XHTML//EN"
+                 location="src/schemas/xhtml-special.ent" />
+        </schemavalidate>
+    </presetdef>
+
+    <presetdef name="schematron-include" uri="org.windyroad.docorro">
+        <docorro:xslt style="src/xslt/schematron/iso_dsdl_include.xsl" />
+    </presetdef>
+
+    <presetdef name="schematron-patterns" uri="org.windyroad.docorro">
+        <docorro:xslt style="src/xslt/schematron/iso_abstract_expand.xsl" />
+    </presetdef>
+
+    <presetdef name="schematron-compile" uri="org.windyroad.docorro">
+        <docorro:xslt style="src/xslt/schematron/iso_svrl_for_xslt2.xsl" />
+    </presetdef>
+
+    <presetdef name="svrl-2-junit" uri="org.windyroad.docorro">
+        <docorro:xslt style="src/xslt/svrl-2-junit.xslt" />
+    </presetdef>
+
+    <macrodef name="schematron" uri="org.windyroad.docorro">
+        <attribute name="in"
+                   description="specifies a single XML document to be styled." />
+        <attribute name="out"
+                   description="specifies the output name for the styled result from the in attribute." />
+        <attribute name="schema"
+                   description="specifies the output name for the styled result from the in attribute." />
+        <sequential>
+
+            <!-- expand inclusions -->
+            <tempfile property="@{schema}.inclusions" deleteonexit="true" />
+            <docorro:schematron-include in="@{schema}"
+                                        out="${@{schema}.inclusions}" />
+
+            <!-- expand abstract patterns -->
+            <tempfile property="@{schema}.patterns" deleteonexit="true" />
+            <docorro:schematron-patterns in="${@{schema}.inclusions}"
+                                         out="${@{schema}.patterns}" />
+
+            <!-- compile it -->
+            <tempfile property="@{schema}.xslt" deleteonexit="true" />
+            <docorro:schematron-compile in="${@{schema}.patterns}"
+                                        out="${@{schema}.xslt}" />
+
+            <docorro:xslt style="${@{schema}.xslt}" in="@{in}" out="@{out}" />
+        </sequential>
+    </macrodef>
+
+    <target name="post-commit"
+            description="just something to get started"
+            depends="run-tests" />
+
+    <target name="run-tests"
+            description="Run tests"
+            depends="">
+        <subant target="run-test">
+            <fileset dir="src/test/quick" includes="*.xml" />
+        </subant>
+        
+        <!-- find out how many tests we have -->
+        <resourcecount property="quick.test.file.count">
+            <fileset dir="src/test/quick" includes="*.xml" />
+        </resourcecount>
+        
+        <!-- just make sure we have results for each test -->
+        <fail message="the number of test results does not match the number of test files">
+            <condition>
+                <resourcecount when="ne" count="${quick.test.file.count}">
+                    <fileset dir="build" includes="*.junit" />
+                </resourcecount>
+            </condition>
+        </fail>
+    </target>
+
+</project>
