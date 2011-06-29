@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Business>
+	<Name>WindyRoad</Name>
+	<Projects>
+		<Project>
+			<Name>Docorro</Name>
+			<Version>1.0</Version>
+		</Project>
+	</Projects>
+</Business>
