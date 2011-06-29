@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Docorro-test-moneta"
+         basedir="../../.."
+         xmlns="antlib:org.apache.tools.ant"
+         xmlns:docorro="org.windyroad.docorro"
+         default="run-test">
+
+    <import file="../../../build.xml" />
+
+
+    <target name="create-doc" depends="-load-ant-contrib">
+        <mkdir dir="build" />
+        <docorro:xslt in="src/test/quick/data/moneta.wsdl"
+                      out="build/moneta.html"
+                      style="WebContent/WEB-INF/classes/xslt/docorro.xslt" />
+        <fail message="HTML not built">
+            <condition>
+                <not>
+                    <available file="build/moneta.html" />
+                </not>
+            </condition>
+        </fail>
+        <docorro:validate-xhtml file="build/moneta.html" />
+    </target>
+
+    <target name="validate-doc" depends="create-doc">
+        <docorro:schematron schema="src/test/quick/data/moneta.sch"
+                            in="build/moneta.html"
+                            out="build/moneta.svrl" />
+        <fail message="Schematron output missing">
+            <condition>
+                <not>
+                    <available file="build/moneta.svrl" />
+                </not>
+            </condition>
+        </fail>
+        <docorro:svrl-2-junit in="build/moneta.svrl" out="build/moneta.junit" />
+        <fail message="Schematron Failure">
+            <condition>
+                <isfileselected file="build/moneta.junit">
+                    <containsregexp expression="&lt;error " />
+                </isfileselected>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="run-test" depends="validate-doc"/>
+</project>

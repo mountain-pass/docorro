@@ -919,7 +919,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 					</xsl:with-param>
 				</xsl:apply-templates>
 			</xsl:if>
-			<xsl:apply-templates select="*[name() != 'xs:annotation']">
+			<xsl:apply-templates select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'annotation')]">
 				<xsl:with-param name="indent"
 					select="concat($indent, '&#160;&#160;&#160;&#160;')" />
 				<xsl:with-param name="section" select="$section" />
@@ -1027,13 +1027,23 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		<xsl:param name="indent" />
 		<xsl:param name="section" />
 		<xsl:param name="expanded-nodes" />
+		<xsl:message>
+			<xsl:text>xs:complexType</xsl:text>
+		</xsl:message>
 		<xsl:apply-templates select="xs:attribute">
 			<xsl:with-param name="indent" select="$indent" />
 			<xsl:with-param name="section" select="$section" />
 			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
 		</xsl:apply-templates>
+		<xsl:for-each
+			select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'attribute' and local-name() != 'annotation')]">
+        <xsl:message>
+            <xsl:text>    child: </xsl:text>
+            <xsl:value-of select="name()"/>
+        </xsl:message>
+		</xsl:for-each>
 		<xsl:apply-templates
-			select="*[name() != 'xs:attribute' and name() != 'xs:annotation']">
+			select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'attribute' and local-name() != 'annotation')]">
 			<xsl:with-param name="indent" select="$indent" />
 			<xsl:with-param name="section" select="$section" />
 			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
@@ -1044,7 +1054,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		<xsl:param name="indent" />
 		<xsl:param name="section" />
 		<xsl:param name="expanded-nodes" />
-		<xsl:apply-templates select="*[name() != 'xs:annotation']">
+		<xsl:apply-templates select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'annotation')]">
 			<xsl:with-param name="indent" select="$indent" />
 			<xsl:with-param name="section" select="$section" />
 			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
@@ -1055,7 +1065,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		<xsl:param name="indent" />
 		<xsl:param name="section" />
 		<xsl:param name="expanded-nodes" />
-		<xsl:apply-templates select="*[name() != 'xs:annotation']">
+		<xsl:apply-templates select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'annotation')]">
 			<xsl:with-param name="indent" select="$indent" />
 			<xsl:with-param name="section" select="$section" />
 			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
@@ -1094,7 +1104,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 				</xsl:call-template>
 			</td>
 		</tr>
-		<xsl:apply-templates select="*[name() != 'xs:annotation']">
+		<xsl:apply-templates select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'annotation')]">
 			<xsl:with-param name="indent" select="$indent" />
 			<xsl:with-param name="section" select="$section" />
 			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
@@ -1118,7 +1128,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
 		</xsl:apply-templates>
 		<xsl:apply-templates
-			select="*[name() != 'xs:attribute' and name() != 'xs:annotation']">
+			select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'attribute' and local-name() != 'annotation')]">
 			<xsl:with-param name="indent" select="$indent" />
 			<xsl:with-param name="section" select="$section" />
 			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
@@ -1132,8 +1142,8 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		<xsl:param name="expanded-nodes" />
 		<tr>
 			<td>
-			 <xsl:value-of select="$indent"/>
-			 <em>array</em>
+				<xsl:value-of select="$indent" />
+				<em>array</em>
 			</td>
 			<td>
 				<xsl:value-of select="replace(xs:attribute/@wsdl:arrayType, '\[\]', '')" />
@@ -1147,11 +1157,13 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 				</xsl:call-template>
 			</td>
 		</tr>
-        <xsl:apply-templates select="docorro:get-type(replace(xs:attribute/@wsdl:arrayType, '\[\]', ''),.)">
-            <xsl:with-param name="indent" select="concat($indent, '&#160;&#160;&#160;&#160;')" />
-            <xsl:with-param name="section" select="$section" />
-            <xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
-        </xsl:apply-templates>
+		<xsl:apply-templates
+			select="docorro:get-type(replace(xs:attribute/@wsdl:arrayType, '\[\]', ''),.)">
+			<xsl:with-param name="indent"
+				select="concat($indent, '&#160;&#160;&#160;&#160;')" />
+			<xsl:with-param name="section" select="$section" />
+			<xsl:with-param name="expanded-nodes" select="$expanded-nodes" />
+		</xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template match="xs:any">
