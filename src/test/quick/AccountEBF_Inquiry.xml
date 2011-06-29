@@ -12,7 +12,7 @@
         <mkdir dir="build" />
         <docorro:xslt in="src/test/quick/data/AccountEBF_Inquiry.wsdl"
                       out="build/AccountEBF_Inquiry.html"
-                      style="WebContent/WEB-INF/classes/xslt/docorro.xslt" />
+                      style="${docorro.xslt}" />
         <fail message="HTML not built">
             <condition>
                 <not>

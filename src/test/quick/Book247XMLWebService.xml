@@ -12,7 +12,7 @@
         <mkdir dir="build" />
         <docorro:xslt in="src/test/quick/data/Book247XMLWebService.wsdl"
                       out="build/Book247XMLWebService.html"
-                      style="WebContent/WEB-INF/classes/xslt/docorro.xslt" />
+                      style="${docorro.xslt}" />
         <fail message="HTML not built">
             <condition>
                 <not>

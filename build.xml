@@ -242,16 +242,20 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
             description="just something to get started"
             depends="run-tests" />
 
+    <fileset id="quick-tests" dir="src/test/quick" includes="*.xml" excludes="moneta.xml"/>
+    <fileset id="pending-tests" dir="src/test/quick" includes="moneta.xml"/>
+    <property name="docorro.xslt" location="src/xslt/docorro.xslt"/>
+        
     <target name="run-tests"
             description="Run tests"
             depends="">
         <subant target="run-test">
-            <fileset dir="src/test/quick" includes="*.xml" />
+            <fileset refid="quick-tests" />
         </subant>
         
         <!-- find out how many tests we have -->
         <resourcecount property="quick.test.file.count">
-            <fileset dir="src/test/quick" includes="*.xml" />
+            <fileset refid="quick-tests" />
         </resourcecount>
         
         <!-- just make sure we have results for each test -->
@@ -262,6 +266,14 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
                 </resourcecount>
             </condition>
         </fail>
+    </target>
+
+    <target name="run-pending-tests"
+            description="Run tests"
+            depends="">
+        <subant target="run-test">
+            <fileset refid="pending-tests" />
+        </subant>
     </target>
 
 </project>
