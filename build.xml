@@ -44,14 +44,14 @@
     <target name="clean-libs" description="">
         <delete dir="lib" />
     </target>
-	
-	<target name="WAR" description="Generate WAR file for deployment">
-		<war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
-			<lib dir="WebContent/WEB-INF/lib"/>
-			<classes dir="build/classes">
-			</classes>
-		</war>
-	</target>
+
+    <target name="WAR" description="Generate WAR file for deployment">
+        <war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
+            <lib dir="WebContent/WEB-INF/lib" />
+            <classes dir="build/classes">
+            </classes>
+        </war>
+    </target>
 
     <target name="build" depends="" description="" />
 
@@ -211,14 +211,11 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
     </presetdef>
 
     <macrodef name="schematron" uri="org.windyroad.docorro">
-        <attribute name="in"
-                   description="specifies a single XML document to be styled." />
-        <attribute name="out"
-                   description="specifies the output name for the styled result from the in attribute." />
-        <attribute name="schema"
-                   description="specifies the output name for the styled result from the in attribute." />
+        <attribute name="in" />
+        <attribute name="out" />
+        <attribute name="schema" />
+        <attribute name="failonerror" default="false" />
         <sequential>
-
             <!-- expand inclusions -->
             <tempfile property="@{schema}.inclusions" deleteonexit="true" />
             <docorro:schematron-include in="@{schema}"
@@ -232,48 +229,136 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
             <!-- compile it -->
             <tempfile property="@{schema}.xslt" deleteonexit="true" />
             <docorro:schematron-compile in="${@{schema}.patterns}"
-                                        out="${@{schema}.xslt}" />
+                                        out="${@{schema}.xslt}">
+                <arg value="diagnose=true" />
+                <arg value="terminate=@{failonerror}" />
+            </docorro:schematron-compile>
 
-            <docorro:xslt style="${@{schema}.xslt}" in="@{in}" out="@{out}" />
+            <docorro:xslt style="${@{schema}.xslt}" in="@{in}" out="@{out}">
+            </docorro:xslt>
+
+            <fail message="Schematron output missing">
+                <condition>
+                    <not>
+                        <available file="@{out}" />
+                    </not>
+                </condition>
+            </fail>
         </sequential>
     </macrodef>
 
     <target name="post-commit"
-            description="just something to get started"
-            depends="run-tests" />
+            description="report on the quick tests"
+            depends="report-quick-tests" />
 
-    <fileset id="quick-tests" dir="src/test/quick" includes="*.xml" excludes="moneta.xml"/>
-    <fileset id="pending-tests" dir="src/test/quick" includes="moneta.xml"/>
-    <property name="docorro.xslt" location="src/xslt/docorro.xslt"/>
-        
-    <target name="run-tests"
+    <target name="pre-commit"
+            description="run the quick tests and fail on the first error"
+            depends="run-quick-tests" />
+
+    <property name="docorro.xslt" location="src/xslt/docorro.xslt" />
+
+    <macrodef name="create-doc" uri="org.windyroad.docorro">
+        <attribute name="in"
+                   description="specifies a single XML document to be styled." />
+        <attribute name="out"
+                   description="specifies the output name for the styled result from the in attribute." />
+        <sequential>
+            <docorro:xslt in="@{in}" out="@{out}" style="${docorro.xslt}" />
+            <fail message="HTML not built">
+                <condition>
+                    <not>
+                        <available file="@{out}" />
+                    </not>
+                </condition>
+            </fail>
+            <docorro:validate-xhtml file="@{out}" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="run-sch-tests"
+              uri="org.windyroad.docorro"
+              description="runs the schematron tests and by default fails the build on the first error">
+        <attribute name="phase" />
+        <attribute name="failonerror" default="true" />
+        <sequential>
+            <mkdir dir="build/@{phase}" />
+
+            <!-- creating the doc is qiicker that checking the doc, so create all the docs first
+            so that is that fails, we don't waste out time with checking the documents -->
+            <for param="sch">
+                <fileset dir="src/test/@{phase}" includes="*.sch" />
+                <sequential>
+                    <basename property="@{sch}.basename"
+                              file="@{sch}"
+                              suffix=".sch" />
+                    <docorro:create-doc in="src/test/data/${@{sch}.basename}.wsdl"
+                                        out="build/@{phase}/${@{sch}.basename}.html" />
+                </sequential>
+            </for>
+
+            <!-- check the document. It's slow because of the html size, not because of schematron
+            running xslt against the generated documents is just as slow -->
+            <for param="sch">
+                <fileset dir="src/test/@{phase}" includes="*.sch" />
+                <sequential>
+                    <docorro:schematron schema="@{sch}"
+                                        in="build/@{phase}/${@{sch}.basename}.html"
+                                        out="build/@{phase}/${@{sch}.basename}.svrl"
+                                        failonerror="@{failonerror}" />
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="report-sch-tests"
+              uri="org.windyroad.docorro"
+              description="runs the schematron test and reports on all tests passed and failed.">
+        <attribute name="phase" />
+        <sequential>
+            <docorro:run-sch-tests phase="@{phase}" failonerror="false" />
+            <!-- after running all the tests, convert them to junit results so hudson can understand them -->
+            <for param="sch">
+                <fileset dir="src/test/@{phase}" includes="*.sch" />
+                <sequential>
+                    <docorro:svrl-2-junit in="build/@{phase}/${@{sch}.basename}.svrl"
+                                          out="build/@{phase}/${@{sch}.basename}.junit">
+                        <arg value="+schema=@{sch}" />
+                    </docorro:svrl-2-junit>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+
+
+    <target name="run-quick-tests"
             description="Run tests"
-            depends="">
-        <subant target="run-test">
-            <fileset refid="quick-tests" />
-        </subant>
-        
-        <!-- find out how many tests we have -->
-        <resourcecount property="quick.test.file.count">
-            <fileset refid="quick-tests" />
-        </resourcecount>
-        
-        <!-- just make sure we have results for each test -->
-        <fail message="the number of test results does not match the number of test files">
-            <condition>
-                <resourcecount when="ne" count="${quick.test.file.count}">
-                    <fileset dir="build" includes="*.junit" />
-                </resourcecount>
-            </condition>
-        </fail>
+            depends="-load-ant-contrib">
+        <docorro:run-sch-tests phase="quick" />
     </target>
 
     <target name="run-pending-tests"
             description="Run tests"
-            depends="">
-        <subant target="run-test">
-            <fileset refid="pending-tests" />
-        </subant>
+            depends="-load-ant-contrib">
+        <docorro:run-sch-tests phase="pending" />
+    </target>
+
+    <target name="run-slow-tests"
+            description="Run tests"
+            depends="-load-ant-contrib">
+        <docorro:run-sch-tests phase="slow" />
+    </target>
+
+
+    <target name="report-quick-tests" depends="-load-ant-contrib">
+        <docorro:report-sch-tests phase="quick" />
+    </target>
+
+    <target name="report-pending-tests" depends="-load-ant-contrib">
+        <docorro:report-sch-tests phase="pending" />
+    </target>
+
+    <target name="report-slow-tests" depends="-load-ant-contrib">
+        <docorro:report-sch-tests phase="slow" />
     </target>
 
 </project>
