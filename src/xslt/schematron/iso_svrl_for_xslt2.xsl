@@ -263,6 +263,7 @@
 	<xsl:param name="lang" />
 	<xsl:param name="see" />
 	<xsl:param name="space" />
+	<xsl:variable name="assert">
 	<svrl:failed-assert test="{$test}" >
 		<xsl:if test="string-length( $id ) &gt; 0">
 			<axsl:attribute name="id">
@@ -313,13 +314,14 @@
 			</xsl:if>
 			
 	</svrl:failed-assert>
-	
+    </xsl:variable>	
+	<xsl:copy-of select="$assert"/>
 	
 		<xsl:if test=" $terminate = 'yes' or $terminate = 'true' ">
-		   <axsl:message terminate="yes">TERMINATING</axsl:message>
+		   <axsl:message terminate="yes"><xsl:copy-of select="$assert"/></axsl:message>
 		</xsl:if>
 	    <xsl:if test=" $terminate = 'assert' ">
-		   <axsl:message terminate="yes">TERMINATING</axsl:message>
+		   <axsl:message terminate="yes"><xsl:copy-of select="$assert"/></axsl:message>
 		</xsl:if>
 </xsl:template>
 
@@ -338,6 +340,7 @@
 	<xsl:param name="lang" />
 	<xsl:param name="see" />
 	<xsl:param name="space" />
+	<xsl:variable name="report">
 	<svrl:successful-report test="{$test}" >
 		<xsl:if test=" string-length( $id ) &gt; 0">
 			<axsl:attribute name="id">
@@ -390,10 +393,11 @@
 			 
 			
 	</svrl:successful-report>
-	
+	</xsl:variable>
+	<xsl:copy-of select="$report"/>
 	
 		<xsl:if test=" $terminate = 'yes' or $terminate = 'true' ">
-		   <axsl:message terminate="yes"  >TERMINATING</axsl:message>
+		   <axsl:message terminate="yes"  ><xsl:copy-of select="$report"/></axsl:message>
 		</xsl:if>
 </xsl:template>
 
