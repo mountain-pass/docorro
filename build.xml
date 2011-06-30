@@ -321,9 +321,7 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
                 <fileset dir="src/test/@{phase}" includes="*.sch" />
                 <sequential>
                     <docorro:svrl-2-junit in="build/@{phase}/${@{sch}.basename}.svrl"
-                                          out="build/@{phase}/${@{sch}.basename}.junit">
-                        <arg value="+schema=@{sch}" />
-                    </docorro:svrl-2-junit>
+                                          out="build/@{phase}/${@{sch}.basename}.junit"/>
                 </sequential>
             </for>
         </sequential>
