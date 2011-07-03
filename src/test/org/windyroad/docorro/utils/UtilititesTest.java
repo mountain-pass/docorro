@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -32,7 +33,7 @@ public class UtilititesTest {
 	}
 
 	@Test
-	public void Test_transalateInputStreamIntoXMLDoc() throws XPathExpressionException{
+	public void Test_transalateInputStreamIntoXMLDoc() throws XPathExpressionException, ParserConfigurationException{
 		System.out.println("Test translateInputStreamIntoXMLDoc");
 		Utilities util = new Utilities();
 		Document doc = util.translateInputStreamIntoXMLDoc(testData);
