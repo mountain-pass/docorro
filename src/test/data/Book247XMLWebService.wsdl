@@ -1,0 +1,279 @@
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="https://www.mybookingcalendar.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="https://www.mybookingcalendar.com/"> 
+<types><xsd:schema targetNamespace="https://www.mybookingcalendar.com/"
+> 
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" /> 
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" /> 
+ <xsd:complexType name="Customer"> 
+  <xsd:all> 
+   <xsd:element name="id" type="xsd:integer"/> 
+   <xsd:element name="username" type="xsd:string"/> 
+   <xsd:element name="password" type="xsd:string"/> 
+   <xsd:element name="first_name" type="xsd:string"/> 
+   <xsd:element name="last_name" type="xsd:string"/> 
+   <xsd:element name="address" type="xsd:string"/> 
+   <xsd:element name="city" type="xsd:string"/> 
+   <xsd:element name="province" type="xsd:string"/> 
+   <xsd:element name="postalcode" type="xsd:string"/> 
+   <xsd:element name="country" type="xsd:string"/> 
+   <xsd:element name="email" type="xsd:string"/> 
+   <xsd:element name="phone" type="xsd:string"/> 
+   <xsd:element name="phone2" type="xsd:string"/> 
+   <xsd:element name="mobile" type="xsd:string"/> 
+   <xsd:element name="fax" type="xsd:string"/> 
+   <xsd:element name="birth_date" type="xsd:string"/> 
+   <xsd:element name="start_date" type="xsd:string"/> 
+   <xsd:element name="direct_login_url" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="Customers"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Customer[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="Service"> 
+  <xsd:all> 
+   <xsd:element name="id" type="xsd:integer"/> 
+   <xsd:element name="name" type="xsd:string"/> 
+   <xsd:element name="total_duration" type="xsd:integer"/> 
+   <xsd:element name="cost" type="xsd:double"/> 
+   <xsd:element name="description" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="Services"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Service[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="Schedule"> 
+  <xsd:all> 
+   <xsd:element name="id" type="xsd:integer"/> 
+   <xsd:element name="location_id" type="xsd:integer"/> 
+   <xsd:element name="group_id" type="xsd:integer"/> 
+   <xsd:element name="name" type="xsd:string"/> 
+   <xsd:element name="description" type="xsd:string"/> 
+   <xsd:element name="services_list" type="xsd:string"/> 
+   <xsd:element name="months_list" type="xsd:string"/> 
+   <xsd:element name="start_date" type="xsd:string"/> 
+   <xsd:element name="end_date" type="xsd:string"/> 
+   <xsd:element name="booking_confirmation_numbers" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="Schedules"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Schedule[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="Group"> 
+  <xsd:all> 
+   <xsd:element name="id" type="xsd:integer"/> 
+   <xsd:element name="name" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="Groups"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Group[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="Location"> 
+  <xsd:all> 
+   <xsd:element name="id" type="xsd:integer"/> 
+   <xsd:element name="name" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="Locations"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Location[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="Package"> 
+  <xsd:all> 
+   <xsd:element name="id" type="xsd:integer"/> 
+   <xsd:element name="name" type="xsd:string"/> 
+   <xsd:element name="description" type="xsd:string"/> 
+   <xsd:element name="cost" type="xsd:double"/> 
+   <xsd:element name="quantity" type="xsd:integer"/> 
+   <xsd:element name="services_list" type="xsd:string"/> 
+   <xsd:element name="days_list" type="xsd:string"/> 
+   <xsd:element name="month_list" type="xsd:string"/> 
+   <xsd:element name="start_date" type="xsd:string"/> 
+   <xsd:element name="finish_date" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="Packages"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Package[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="Event"> 
+  <xsd:all> 
+   <xsd:element name="id" type="xsd:integer"/> 
+   <xsd:element name="location_id" type="xsd:integer"/> 
+   <xsd:element name="name" type="xsd:string"/> 
+   <xsd:element name="description" type="xsd:string"/> 
+   <xsd:element name="total_participants" type="xsd:integer"/> 
+   <xsd:element name="days_list" type="xsd:string"/> 
+   <xsd:element name="month_list" type="xsd:string"/> 
+   <xsd:element name="start_date" type="xsd:string"/> 
+   <xsd:element name="finish_date" type="xsd:string"/> 
+   <xsd:element name="cost_types" type="tns:EventCosttypes"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="EventCosttype"> 
+  <xsd:all> 
+   <xsd:element name="id" type="xsd:integer"/> 
+   <xsd:element name="name" type="xsd:string"/> 
+   <xsd:element name="cost" type="xsd:double"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="Events"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Event[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="EventCosttypes"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:EventCosttype[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="ScheduleBooking"> 
+  <xsd:all> 
+   <xsd:element name="confirmation_number" type="xsd:string"/> 
+   <xsd:element name="schedule" type="tns:Schedule"/> 
+   <xsd:element name="service" type="tns:Service"/> 
+   <xsd:element name="start_datetime1" type="xsd:string"/> 
+   <xsd:element name="end_datetime1" type="xsd:string"/> 
+   <xsd:element name="start_datetime2" type="xsd:string"/> 
+   <xsd:element name="end_datetime2" type="xsd:string"/> 
+   <xsd:element name="customer" type="tns:Customer"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="ScheduleAvailableTimeSlot"> 
+  <xsd:all> 
+   <xsd:element name="product_id" type="xsd:integer"/> 
+   <xsd:element name="appointment_date" type="xsd:string"/> 
+   <xsd:element name="product_available" type="xsd:boolean"/> 
+   <xsd:element name="product_unavailable_reason" type="xsd:string"/> 
+   <xsd:element name="next_available_date" type="xsd:string"/> 
+   <xsd:element name="prev_available_date" type="xsd:string"/> 
+   <xsd:element name="time_slots" type="tns:TimeSlots"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="BookingDetail"> 
+  <xsd:all> 
+   <xsd:element name="confirmation_number" type="xsd:string"/> 
+   <xsd:element name="schedule_name" type="xsd:string"/> 
+   <xsd:element name="schedule_description" type="xsd:string"/> 
+   <xsd:element name="service_name" type="xsd:string"/> 
+   <xsd:element name="service_description" type="xsd:string"/> 
+   <xsd:element name="customer_name" type="xsd:string"/> 
+   <xsd:element name="customer_email" type="xsd:string"/> 
+   <xsd:element name="book_start_time" type="xsd:string"/> 
+   <xsd:element name="book_end_time" type="xsd:string"/> 
+   <xsd:element name="book_start_time1" type="xsd:string"/> 
+   <xsd:element name="book_end_time1" type="xsd:string"/> 
+   <xsd:element name="amount" type="xsd:double"/> 
+   <xsd:element name="amount_paid" type="xsd:boolean"/> 
+   <xsd:element name="time_zone" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="BookingSummary"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:BookingDetail[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="TimeSlot"> 
+  <xsd:all> 
+   <xsd:element name="start_time" type="xsd:string"/> 
+   <xsd:element name="available" type="xsd:boolean"/> 
+   <xsd:element name="end_time" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="TimeSlots"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TimeSlot[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="ServiceDateTime"> 
+  <xsd:all> 
+   <xsd:element name="service_id" type="xsd:integer"/> 
+   <xsd:element name="start_datetime" type="xsd:string"/> 
+   <xsd:element name="end_datetime" type="xsd:string"/> 
+   <xsd:element name="start_datetime1" type="xsd:string"/> 
+   <xsd:element name="end_datetime1" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="ServiceDateTimes"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ServiceDateTime[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+ <xsd:complexType name="ConfirmationNumber"> 
+  <xsd:all> 
+   <xsd:element name="confirmation_number" type="xsd:string"/> 
+  </xsd:all> 
+ </xsd:complexType> 
+ <xsd:complexType name="ConfirmationNumbers"> 
+  <xsd:complexContent> 
+   <xsd:restriction base="SOAP-ENC:Array"> 
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:ConfirmationNumber[]"/> 
+   </xsd:restriction> 
+  </xsd:complexContent> 
+ </xsd:complexType> 
+</xsd:schema> 
+</types> 
+<message name="nCreateCustomerRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="customer_info" type="tns:Customer" /><part name="send_welcome_email" type="xsd:boolean" /></message> 
+<message name="nCreateCustomerResponse"><part name="return" type="xsd:integer" /></message> 
+<message name="bModifyCustomerRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="customer_info" type="tns:Customer" /></message> 
+<message name="bModifyCustomerResponse"><part name="return" type="xsd:boolean" /></message> 
+<message name="bRemoveCustomerRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="id" type="xsd:integer" /></message> 
+<message name="bRemoveCustomerResponse"><part name="return" type="xsd:boolean" /></message> 
+<message name="tGetCustomerRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="id" type="xsd:integer" /><part name="start_date" type="xsd:string" /><part name="end_date" type="xsd:string" /></message> 
+<message name="tGetCustomerResponse"><part name="return" type="tns:Customers" /></message> 
+<message name="tGetServicesRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /></message> 
+<message name="tGetServicesResponse"><part name="return" type="tns:Services" /></message> 
+<message name="tGetSchedulesRequest"><part name="name" type="xsd:string" /><part name="password" type="xsd:string" /></message> 
+<message name="tGetSchedulesResponse"><part name="return" type="tns:Schedules" /></message> 
+<message name="tGetGroupsRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /></message> 
+<message name="tGetGroupsResponse"><part name="return" type="tns:Groups" /></message> 
+<message name="tGetLocationsRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /></message> 
+<message name="tGetLocationsResponse"><part name="return" type="tns:Locations" /></message> 
+<message name="tGetPackagesRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /></message> 
+<message name="tGetPackagesResponse"><part name="return" type="tns:Packages" /></message> 
+<message name="tGetEventsRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /></message> 
+<message name="tGetEventsResponse"><part name="return" type="tns:Events" /></message> 
+<message name="tGetScheduleBookingsRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="booking_confirmation_number" type="xsd:string" /></message> 
+<message name="tGetScheduleBookingsResponse"><part name="return" type="tns:ScheduleBooking" /></message> 
+<message name="tGetBookingsRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="schedule_name" type="xsd:string" /><part name="start_date" type="xsd:string" /><part name="end_date" type="xsd:string" /></message> 
+<message name="tGetBookingsResponse"><part name="return" type="tns:BookingSummary" /></message> 
+<message name="tGetAvailableTimeSlotsRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="product_id" type="xsd:integer" /><part name="appointment_date" type="xsd:date" /></message> 
+<message name="tGetAvailableTimeSlotsResponse"><part name="return" type="tns:ScheduleAvailableTimeSlot" /></message> 
+<message name="tCreateScheduleBookingsRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="customer_id" type="xsd:integer" /><part name="product_id" type="xsd:integer" /><part name="service_datetime" type="tns:ServiceDateTime" /><part name="paid" type="xsd:boolean" /><part name="payment_type" type="xsd:string" /><part name="send_confirmation_email" type="xsd:boolean" /></message> 
+<message name="tCreateScheduleBookingsResponse"><part name="return" type="tns:ConfirmationNumbers" /></message> 
+<message name="bCancelScheduleBookingRequest"><part name="user_name" type="xsd:string" /><part name="password" type="xsd:string" /><part name="confirmation_number" type="xsd:string" /><part name="send_confirmation_email" type="xsd:boolean" /></message> 
+<message name="bCancelScheduleBookingResponse"><part name="return" type="xsd:boolean" /></message> 
+<portType name="Book247XMLWebServicePortType"><operation name="nCreateCustomer"><documentation>Creates Customer record for the given Customer Information and returns newly created Customer ID.</documentation><input message="tns:nCreateCustomerRequest"/><output message="tns:nCreateCustomerResponse"/></operation><operation name="bModifyCustomer"><documentation>Updates Customer information for the given Customer ID and returns boolean status.</documentation><input message="tns:bModifyCustomerRequest"/><output message="tns:bModifyCustomerResponse"/></operation><operation name="bRemoveCustomer"><documentation>Removed Customer and returns boolean status.</documentation><input message="tns:bRemoveCustomerRequest"/><output message="tns:bRemoveCustomerResponse"/></operation><operation name="tGetCustomer"><documentation>Return Customer Details for the Customer ID, Start Date(optional), End Date(optional) parameters passed.</documentation><input message="tns:tGetCustomerRequest"/><output message="tns:tGetCustomerResponse"/></operation><operation name="tGetServices"><documentation>Return all Services for the Vendor</documentation><input message="tns:tGetServicesRequest"/><output message="tns:tGetServicesResponse"/></operation><operation name="tGetSchedules"><documentation>Return all Schedules for the Vendor</documentation><input message="tns:tGetSchedulesRequest"/><output message="tns:tGetSchedulesResponse"/></operation><operation name="tGetGroups"><documentation>Return all Groups for the Vendor</documentation><input message="tns:tGetGroupsRequest"/><output message="tns:tGetGroupsResponse"/></operation><operation name="tGetLocations"><documentation>Return all Locations for the Vendor</documentation><input message="tns:tGetLocationsRequest"/><output message="tns:tGetLocationsResponse"/></operation><operation name="tGetPackages"><documentation>Return all Special Packages for the Vendor</documentation><input message="tns:tGetPackagesRequest"/><output message="tns:tGetPackagesResponse"/></operation><operation name="tGetEvents"><documentation>Return all Events for the Vendor</documentation><input message="tns:tGetEventsRequest"/><output message="tns:tGetEventsResponse"/></operation><operation name="tGetScheduleBookings"><documentation>Returns booking information for the matching booking confirmation number</documentation><input message="tns:tGetScheduleBookingsRequest"/><output message="tns:tGetScheduleBookingsResponse"/></operation><operation name="tGetBookings"><documentation>Returns booking summary for the matching schedule name, start date and/or end date.</documentation><input message="tns:tGetBookingsRequest"/><output message="tns:tGetBookingsResponse"/></operation><operation name="tGetAvailableTimeSlots"><documentation>This method return the timeslots and its availability (start_time, end_time and available) for a given date and schedule ID. Also the other values returned by this function are product_id: Schedule Unique ID, appointment_date: Date Appointment Booked, product_available: Schedule Available/Not Available, product_unavailable_reason: Reason for Schedule Unavailability, next_available_date: Schedule's next avaiable date, prev_available_date: Schedule's previous available date</documentation><input message="tns:tGetAvailableTimeSlotsRequest"/><output message="tns:tGetAvailableTimeSlotsResponse"/></operation><operation name="tCreateScheduleBookings"><documentation>Creates Schedule Bookings for the given Customer Unique ID, Schedule Unique ID, Service Unique ID(s), Service Start DateTime(s), Service End DateTime(s), Payment Status(optional), Payment Type(optional). This returns Confirmation Number(s) and sends Confirmation Email(optional). Allowed payment types are Not Paid, Cash, Cheque, Debit Card, Credit Card, Visa, American Express, Mastercard, Discover, Enroute, Diners Club, Paypal, Paid, Gift Certificate, Invoiced, No Charge.</documentation><input message="tns:tCreateScheduleBookingsRequest"/><output message="tns:tCreateScheduleBookingsResponse"/></operation><operation name="bCancelScheduleBooking"><documentation>Cancels Schedule Booking for the given Confirmation Number and sends Cancellation Email(optional).</documentation><input message="tns:bCancelScheduleBookingRequest"/><output message="tns:bCancelScheduleBookingResponse"/></operation></portType> 
+<binding name="Book247XMLWebServiceBinding" type="tns:Book247XMLWebServicePortType"><soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/><operation name="nCreateCustomer"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#nCreateCustomer" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="bModifyCustomer"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#bModifyCustomer" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="bRemoveCustomer"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#bRemoveCustomer" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetCustomer"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetCustomer" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetServices"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetServices" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetSchedules"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetSchedules" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetGroups"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetGroups" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetLocations"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetLocations" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetPackages"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetPackages" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetEvents"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetEvents" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetScheduleBookings"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetScheduleBookings" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetBookings"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetBookings" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tGetAvailableTimeSlots"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tGetAvailableTimeSlots" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="tCreateScheduleBookings"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#tCreateScheduleBookings" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="bCancelScheduleBooking"><soap:operation soapAction="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl#bCancelScheduleBooking" style="rpc"/><input><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="https://www.mybookingcalendar.com/webservice/Book247XMLWebService.wsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation></binding> 
+<service name="Book247XMLWebService"><port name="Book247XMLWebServicePort" binding="tns:Book247XMLWebServiceBinding"><soap:address location="https://www.mybookingcalendar.com:443/webservice/index.php"/></port></service> 
+</definitions> 
