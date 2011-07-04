@@ -11,5 +11,8 @@
 		<dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" transitive="false"/>
         <dependency org="net.sourceforge.saxon" name="saxon-he" rev="9.3.0.4" transitive="true"/>
         <dependency org="org.apache.ant" name="ant-antunit" rev="1.1"/>
+        <dependency org="org.junit" name="junit" rev="4.8.2">
+        	<artifact name="junit" type="jar"/>
+        </dependency>
 	</dependencies>
 </ivy-module>

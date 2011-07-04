@@ -22,7 +22,7 @@
     <property name="ivy.jar.file"
               location="${ivy.jar.dir}/ivy-${ivy.install.version}.jar" />
 	
-	<property name="junit" value="src/test/lib/junit-4.9b2.jar"/>
+	<property name="junit" value="lib/junit-4.8.2.jar"/>
 	
 	<path id="classpath.test">
 		<pathelement path="build/classes"/>
