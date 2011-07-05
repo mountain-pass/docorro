@@ -53,11 +53,13 @@
     </target>
 
     <target name="WAR" description="Generate WAR file for deployment">
+    	<mkdir dir="build/classes"/>
         <war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
             <lib dir="WebContent/WEB-INF/lib" />
             <classes dir="build/classes">
             </classes>
         </war>
+    	<delete dir="build/classes"/>
     </target>
 
     <target name="build" depends="" description="" />
