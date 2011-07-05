@@ -21,14 +21,14 @@
     <property name="ivy.jar.dir" location="${user.home}/.ivy2/jars" />
     <property name="ivy.jar.file"
               location="${ivy.jar.dir}/ivy-${ivy.install.version}.jar" />
-	
-	<property name="junit" value="lib/junit-4.8.2.jar"/>
-	
-	<path id="classpath.test">
-		<pathelement path="build/classes"/>
-		<pathelement path="${junit}"/>
-	</path>
-	
+
+    <property name="junit" value="lib/junit-4.8.2.jar" />
+
+    <path id="classpath.test">
+        <pathelement path="build/classes" />
+        <pathelement path="${junit}" />
+    </path>
+
     <defaultexcludes echo="false" add="**/*.hg" />
     <defaultexcludes echo="false" add="**/*.hg/**" />
     <defaultexcludes echo="false" add="**/*.hgtags" />
@@ -128,59 +128,24 @@
                               value="lib/[artifact]-[revision].[ext]" />
     </target>
 
-    <macrodef name="xslt"
-              uri="org.windyroad.docorro"
-              description="Custom XSLT task using Saxon XSLT engine, to workaround Apache Ant Defect 49271 
-(https://issues.apache.org/bugzilla/show_bug.cgi?id=49271).\\
-_(Available since verison 1.4.1)_">
-        <attribute name="in"
-                   description="specifies a single XML document to be styled." />
-        <attribute name="out"
-                   description="specifies the output name for the styled result from the in attribute." />
-        <attribute name="style"
-                   description="name of the stylesheet to use - given either relative to the project's basedir or as an absolute path." />
-        <attribute name="classpath"
-                   default="${saxon-he.saxon-he}"
-                   description="the classpath to the saxon jar" />
-        <attribute name="taskname" default="tibant:xslt" />
-        <element name="params"
-                 optional="true"
-                 implicit="true"
-                 description="additional parameters to pass to saxon in 
-            the form `&lt;arg value=&quot;someparam=somevalue&quot;/&gt;`. See 
-            http://www.saxonica.com/documentation/using-xsl/commandline.xml for details" />
-        <!--
+    <presetdef name="xslt"
+               uri="org.windyroad.docorro"
+               description="Custom XSLT task using Saxon XSLT engine">
+        <xslt classpath="${saxon-he.saxon-he}" processor="org.apache.tools.ant.taskdefs.optional.TraXLiaison">
+            <xmlcatalog>
+                <dtd publicId="-//W3C//DTD XHTML 1.0 Strict//EN"
+                     location="src/schemas/xhtml1-strict.dtd" />
+                <dtd publicId="-//W3C//ENTITIES Latin 1 for XHTML//EN"
+                     location="src/schemas/xhtml-lat1.ent" />
+                <dtd publicId="-//W3C//ENTITIES Symbols for XHTML//EN"
+                     location="src/schemas/xhtml-symbol.ent" />
+                <dtd publicId="-//W3C//ENTITIES Special for XHTML//EN"
+                     location="src/schemas/xhtml-special.ent" />
+            </xmlcatalog>
+            <factory name="net.sf.saxon.TransformerFactoryImpl" />
+        </xslt>
+    </presetdef>
 
-==== Example ====
-
-    <tibant:xslt in="myinput.xml"
-                 out="build/myoutput.xml"
-                 style="src/xslt/mystyle.xslt">
-        <arg value="+myotherinput=myotherinput.xml" />
-        <arg value="basedir=${basedir}" />
-    </tibant:xslt>
-
-The above example applies the `src/xslt/mystyle.xslt` stylesheet against `myinput.xml`. It sets the parameter `basedir`
-to `${basedir}` and the parameter `myotherinput` to the document node of `myotherinput.xml` and writes the results to
-`build/myoutput.xml`
-
--->
-        <sequential>
-            <property name="@{in}.location" location="@{in}" />
-            <property name="@{style}.location" location="@{style}" />
-            <property name="@{out}.location" location="@{out}" />
-            <java classname="net.sf.saxon.Transform"
-                  classpath="@{classpath}"
-                  taskname="@{taskname}"
-                  failonerror="true">
-                <classpath path="@{classpath}" />
-                <arg value="-s:${@{in}.location}" />
-                <arg value="-xsl:${@{style}.location}" />
-                <arg value="-o:${@{out}.location}" />
-                <params />
-            </java>
-        </sequential>
-    </macrodef>
 
     <presetdef name="validate-xhtml" uri="org.windyroad.docorro">
         <schemavalidate>
@@ -237,8 +202,8 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
             <tempfile property="@{schema}.xslt" deleteonexit="true" />
             <docorro:schematron-compile in="${@{schema}.patterns}"
                                         out="${@{schema}.xslt}">
-                <arg value="diagnose=true" />
-                <arg value="terminate=@{failonerror}" />
+                <param name="diagnose" expression="true" />
+                <param name="terminate" expression="@{failonerror}" />
             </docorro:schematron-compile>
 
             <docorro:xslt style="${@{schema}.xslt}" in="@{in}" out="@{out}">
@@ -308,6 +273,7 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
             <for param="sch">
                 <fileset dir="src/test/@{phase}" includes="*.sch" />
                 <sequential>
+                    <echo>${saxon-he.saxon-he}</echo>
                     <docorro:schematron schema="@{sch}"
                                         in="build/@{phase}/${@{sch}.basename}.html"
                                         out="build/@{phase}/${@{sch}.basename}.svrl"
@@ -328,7 +294,7 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
                 <fileset dir="src/test/@{phase}" includes="*.sch" />
                 <sequential>
                     <docorro:svrl-2-junit in="build/@{phase}/${@{sch}.basename}.svrl"
-                                          out="build/@{phase}/${@{sch}.basename}.junit"/>
+                                          out="build/@{phase}/${@{sch}.basename}.junit" />
                 </sequential>
             </for>
         </sequential>
@@ -338,7 +304,7 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
     <target name="run-quick-tests"
             description="Run tests"
             depends="-load-ant-contrib">
-    	<junit printsummary="yes" haltonerror="true" haltonfailure="true">
+        <!--junit printsummary="yes" haltonerror="true" haltonfailure="true">
     		<classpath refid="classpath.test"/>
     		<formatter type="plain" usefile="false"/>
     		<batchtest>
@@ -346,9 +312,9 @@ to `${basedir}` and the parameter `myotherinput` to the document node of `myothe
     				<include name="**/*Test.java"/>
     			</fileset>
     		</batchtest>	
-    	</junit>
+    	</junit-->
         <docorro:run-sch-tests phase="quick" />
-    	
+
     </target>
 
     <target name="run-pending-tests"
