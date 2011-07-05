@@ -318,7 +318,7 @@
 
     <target name="run-quick-tests"
             description="Run tests"
-            depends="-load-ant-contrib">
+            depends="-load-ant-contrib,compile-Java">
         <junit printsummary="yes" haltonerror="true" haltonfailure="true">
     		<classpath refid="classpath.test"/>
     		<formatter type="plain" usefile="false"/>
