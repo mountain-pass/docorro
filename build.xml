@@ -64,13 +64,11 @@
 	<target name="compile-Java" description="" depends="retrieve">
 		<mkdir dir="build/classes"/>
 		<javac srcdir="src" destdir="build/classes" classpathref="classpath.application"/>
+		<copydir dest="build/classes/xslt" src="src/xslt"></copydir>
 	</target>
 
     <target name="WAR" description="Generate WAR file for deployment" depends="compile-Java">
         <war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
-        	<fileset dir="src">
-        		<include name="xslt/**"/>
-        	</fileset>
             <lib dir="WebContent/WEB-INF/lib" />
             <classes dir="build/classes">
             </classes>
