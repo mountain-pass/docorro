@@ -5,9 +5,6 @@
 	version="2.0">
 	<xsl:output omit-xml-declaration="no" indent="yes" />
 
-    <!-- we pass in the schematron schema so we can get an accurate list of tests -->
-    <xsl:param name="schema"/>
-
 	<xsl:template match="/svrl:schematron-output">
 		<testsuite name="{@title}" timestamp="xs:datetime()"
 			hostname="localhost" tests="{count(svrl:failed-assert |svrl:successful-report)}"
