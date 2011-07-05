@@ -28,6 +28,15 @@
         <pathelement path="build/classes" />
         <pathelement path="${junit}" />
     </path>
+	
+	<path id="classpath.application">
+		<fileset dir="WebContent/WEB-INF/lib">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="lib">
+			<include name="junit-4.8.2.jar"/>
+		</fileset>
+	</path>
 
     <defaultexcludes echo="false" add="**/*.hg" />
     <defaultexcludes echo="false" add="**/*.hg/**" />
@@ -51,15 +60,18 @@
     <target name="clean-libs" description="">
         <delete dir="lib" />
     </target>
+	
+	<target name="compile-Java" description="" depends="retrieve">
+		<mkdir dir="build/classes"/>
+		<javac srcdir="src" destdir="build/classes" classpathref="classpath.application"/>
+	</target>
 
-    <target name="WAR" description="Generate WAR file for deployment">
-    	<mkdir dir="build/classes"/>
+    <target name="WAR" description="Generate WAR file for deployment" depends="compile-Java">
         <war destfile="build/docorro.war" webxml="WebContent/WEB-INF/web.xml">
             <lib dir="WebContent/WEB-INF/lib" />
             <classes dir="build/classes">
             </classes>
         </war>
-    	<delete dir="build/classes"/>
     </target>
 
     <target name="build" depends="" description="" />
