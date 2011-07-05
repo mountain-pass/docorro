@@ -113,11 +113,11 @@ public class GenerateHTMLDoc {
 					while(iter.hasNext()){
 						FileItem item = iter.next();
 						if(!item.isFormField() && item.getSize() >0){
-							System.out.println("The file name is: " + item.getName());
+							//System.out.println("The file name is: " + item.getName());
 							Utilities util = new Utilities();
 							Document doc = util.translateInputStreamIntoXMLDoc(item.getInputStream());
 							endHTML = util.transformSchemeToDoc(doc);
-							System.out.println("Output HTML --" + endHTML);
+							//System.out.println("Output HTML --" + endHTML);
 						}
 							//can do the write later if needed
 //							try{
