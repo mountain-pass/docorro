@@ -304,7 +304,7 @@
     <target name="run-quick-tests"
             description="Run tests"
             depends="-load-ant-contrib">
-        <!--junit printsummary="yes" haltonerror="true" haltonfailure="true">
+        <junit printsummary="yes" haltonerror="true" haltonfailure="true">
     		<classpath refid="classpath.test"/>
     		<formatter type="plain" usefile="false"/>
     		<batchtest>
@@ -312,7 +312,7 @@
     				<include name="**/*Test.java"/>
     			</fileset>
     		</batchtest>	
-    	</junit-->
+    	</junit>
         <docorro:run-sch-tests phase="quick" />
 
     </target>
