@@ -65,6 +65,7 @@
 		<mkdir dir="build/classes"/>
 		<javac srcdir="src" destdir="build/classes" classpathref="classpath.application"/>
 		<copydir dest="build/classes/xslt" src="src/xslt"></copydir>
+		<copy file="src/test/quick/ErrorPage.html" tofile="build/classes/test/quick/ErrorPage.html"/>
 	</target>
 
     <target name="WAR" description="Generate WAR file for deployment" depends="compile-Java">
