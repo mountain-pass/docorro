@@ -124,9 +124,11 @@ public class GenerateHTMLDoc {
 			Response.ok().build();
 			
 		} catch(Exception e){
+			System.out.println("Error caught");
 			//throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
 			Utilities util = new Utilities();
 			endHTML = util.getErrorPage();
+			System.out.println(endHTML);
 		} finally{
 			return endHTML;
 		}
