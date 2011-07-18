@@ -96,8 +96,8 @@ public class GenerateHTMLDoc {
 	@Produces(MediaType.TEXT_HTML)
 	//@Consumes("mutipart/form-data")
 	public String uploadDocument(@Context HttpServletRequest request) {
+		String endHTML = "";
 		try{
-			String endHTML = "";
 			LoggingFilter logFilter = new LoggingFilter();
 			if(ServletFileUpload.isMultipartContent(request)){
 				FileItemFactory factory = new DiskFileItemFactory();
@@ -117,38 +117,18 @@ public class GenerateHTMLDoc {
 							Utilities util = new Utilities();
 							Document doc = util.translateInputStreamIntoXMLDoc(item.getInputStream());
 							endHTML = util.transformSchemeToDoc(doc);
-							//System.out.println("Output HTML --" + endHTML);
 						}
-							//can do the write later if needed
-//							try{
-//								String fileDirectory= new File(".").getAbsolutePath();
-//								System.out.println(fileDirectory);
-//								item.write(new File(fileDirectory + item.getName()));
-//							}catch(Exception e){
-//								e.printStackTrace();
-//							}
 					}
 				}
 			}
 			Response.ok().build();
-			//Using Servlet context declared at the top of the class
-			return endHTML;
-			
-//			FormDataContentDisposition contentDisp = bodyPart.getFormDataContentDisposition();
-//			InputStream in = bodyPart.getValueAs(InputStream.class);
-//			String fileName = contentDisp.getFileName();
-//			System.out.println("Here is the file name: " + fileName);
-//			//FormDataBodyPart p = binaryData.getField("file");
-//			//InputStream file = p.getValueAs(InputStream.class);
-//			//File workingFile = writeToFile(binaryData);
-//			System.out.println("This is a POST message");
-//			//System.out.println("This is the user input: " + workingFile.getName());
-//			URI uri = uriInfo.getAbsolutePath();
-//			System.out.println("This is the current uri Path: " + uri.toString());
-			
 			
 		} catch(Exception e){
-			throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
+			//throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
+			Utilities util = new Utilities();
+			endHTML = util.getErrorPage();
+		} finally{
+			return endHTML;
 		}
 		
 	}
