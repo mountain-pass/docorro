@@ -50,7 +50,7 @@ public class GenerateHTMLDoc {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String sayWelcome(){
-		System.out.println("This is a GET message---------");
+		//System.out.println("This is a GET message---------");
 		String endHTML="";
 		String workingPath;
 		try {
