@@ -1,7 +1,9 @@
 package org.windyroad.docorro.utils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -57,10 +59,10 @@ public class Utilities {
 			//Create a transformer for the stylesheet
 			
 			//String workingPath = context.getResource("/WEB-INF").getPath();
-			String currentDirector = "/xslt/docorro.xslt";
+			String workingXSLT = "/xslt/docorro.xslt";
 			//Only use this for local TOMCAT
 			//String currentDirector = "/Users/Sam/Documents/workspace/DocumentGenerator/WebContent/WEB-INF/xslt/docorro.xslt";
-			InputStream xlstDoc = GenerateHTMLDoc.class.getClassLoader().getResourceAsStream(currentDirector);
+			InputStream xlstDoc = GenerateHTMLDoc.class.getClassLoader().getResourceAsStream(workingXSLT);
 			Transformer transformer = factory.newTransformer(new StreamSource(xlstDoc));
 			
 			DOMSource domSource = new DOMSource(doc);
@@ -79,6 +81,26 @@ public class Utilities {
 		}
 		return "";
 	
+	}
+	
+	
+	//Load error page and return as string
+	public String getErrorPage() throws IOException{
+		StringBuffer fileData = new StringBuffer(1000);
+		String errorPageDirectory = "/test/quick";
+		InputStream errorPageIS = Utilities.class.getClassLoader().getResourceAsStream(errorPageDirectory +"/ErrorPage.html");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(errorPageIS));
+		//Tomcat use this
+		//BufferedReader reader = new BufferedReader(new FileReader("../UploadFile.html"));
+		char[] buf = new char[1024];
+		int numRead=0;
+		while((numRead=reader.read(buf))!=-1){
+			String readData = String.valueOf(buf,0,numRead);
+			fileData.append(readData);
+			buf=new char[1024];
+		}
+		reader.close();
+		return fileData.toString();
 	}
 
 
