@@ -19,8 +19,7 @@
 
     <property name="ivy.install.version" value="2.2.0" />
     <property name="ivy.jar.dir" location="${user.home}/.ivy2/jars" />
-    <property name="ivy.jar.file"
-              location="${ivy.jar.dir}/ivy-${ivy.install.version}.jar" />
+    <property name="ivy.jar.file" location="${ivy.jar.dir}/ivy-${ivy.install.version}.jar" />
 
     <property name="junit" value="lib/junit-4.8.2.jar" />
 
@@ -28,15 +27,15 @@
         <pathelement path="build/classes" />
         <pathelement path="${junit}" />
     </path>
-	
-	<path id="classpath.application">
-		<fileset dir="WebContent/WEB-INF/lib">
-			<include name="*.jar"/>
-		</fileset>
-		<fileset dir="lib">
-			<include name="junit-4.8.2.jar"/>
-		</fileset>
-	</path>
+
+    <path id="classpath.application">
+        <fileset dir="WebContent/WEB-INF/lib">
+            <include name="*.jar" />
+        </fileset>
+        <fileset dir="lib">
+            <include name="junit-4.8.2.jar" />
+        </fileset>
+    </path>
 
     <defaultexcludes echo="false" add="**/*.hg" />
     <defaultexcludes echo="false" add="**/*.hg/**" />
@@ -94,15 +93,11 @@
         </condition>
     </target>
 
-    <target name="-load-ivy"
-            depends="-check-ivy-downloaded,-download-ivy"
-            unless="ivy.loaded">
+    <target name="-load-ivy" depends="-check-ivy-downloaded,-download-ivy" unless="ivy.loaded">
         <path id="ivy.lib.path">
             <fileset dir="${ivy.jar.dir}" includes="*.jar" />
         </path>
-        <taskdef resource="org/apache/ivy/ant/antlib.xml"
-                 uri="antlib:org.apache.ivy.ant"
-                 classpathref="ivy.lib.path" />
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
         <property name="ivy.report.todir" location="build/ivy" />
         <ivy:configure file="config/ivysettings.xml" />
         <ivy:resolve file="${ivy.dep.file}" conf="${ivy.configurations}" />
@@ -110,8 +105,7 @@
     </target>
 
     <target name="-load-antunit" depends="retrieve" unless="antunit.loaded">
-        <taskdef uri="antlib:org.apache.ant.antunit"
-                 resource="org/apache/ant/antunit/antlib.xml">
+        <taskdef uri="antlib:org.apache.ant.antunit" resource="org/apache/ant/antunit/antlib.xml">
             <classpath>
                 <pathelement location="${ant-antunit.ant-antunit}" />
             </classpath>
@@ -120,11 +114,8 @@
     </target>
 
 
-    <target name="-load-ant-contrib"
-            depends="retrieve"
-            unless="ant.contrib.loaded">
-        <property name="ant-contrib.jar.path"
-                  location="lib/ant-contrib-1.0b3.jar" />
+    <target name="-load-ant-contrib" depends="retrieve" unless="ant.contrib.loaded">
+        <property name="ant-contrib.jar.path" location="lib/ant-contrib-1.0b3.jar" />
         <taskdef resource="net/sf/antcontrib/antlib.xml">
             <classpath>
                 <pathelement location="${ant-contrib.jar.path}" />
@@ -136,27 +127,18 @@
         <property name="ant.contrib.loaded" value="true" />
     </target>
 
-    <target name="retrieve"
-            description="retrieve dependancies with ivy"
-            depends="-load-ivy">
+    <target name="retrieve" description="retrieve dependancies with ivy" depends="-load-ivy">
         <ivy:retrieve />
-        <ivy:artifactproperty name="[module].[artifact]"
-                              value="lib/[artifact]-[revision].[ext]" />
+        <ivy:artifactproperty name="[module].[artifact]" value="lib/[artifact]-[revision].[ext]" />
     </target>
 
-    <presetdef name="xslt"
-               uri="org.windyroad.docorro"
-               description="Custom XSLT task using Saxon XSLT engine">
+    <presetdef name="xslt" uri="org.windyroad.docorro" description="Custom XSLT task using Saxon XSLT engine">
         <xslt classpath="${saxon-he.saxon-he}" processor="org.apache.tools.ant.taskdefs.optional.TraXLiaison">
             <xmlcatalog>
-                <dtd publicId="-//W3C//DTD XHTML 1.0 Strict//EN"
-                     location="src/schemas/xhtml1-strict.dtd" />
-                <dtd publicId="-//W3C//ENTITIES Latin 1 for XHTML//EN"
-                     location="src/schemas/xhtml-lat1.ent" />
-                <dtd publicId="-//W3C//ENTITIES Symbols for XHTML//EN"
-                     location="src/schemas/xhtml-symbol.ent" />
-                <dtd publicId="-//W3C//ENTITIES Special for XHTML//EN"
-                     location="src/schemas/xhtml-special.ent" />
+                <dtd publicId="-//W3C//DTD XHTML 1.0 Strict//EN" location="src/schemas/xhtml1-strict.dtd" />
+                <dtd publicId="-//W3C//ENTITIES Latin 1 for XHTML//EN" location="src/schemas/xhtml-lat1.ent" />
+                <dtd publicId="-//W3C//ENTITIES Symbols for XHTML//EN" location="src/schemas/xhtml-symbol.ent" />
+                <dtd publicId="-//W3C//ENTITIES Special for XHTML//EN" location="src/schemas/xhtml-special.ent" />
             </xmlcatalog>
             <factory name="net.sf.saxon.TransformerFactoryImpl" />
         </xslt>
@@ -165,20 +147,13 @@
 
     <presetdef name="validate-xhtml" uri="org.windyroad.docorro">
         <schemavalidate>
-            <schema namespace="http://www.w3.org/XML/1998/namespace"
-                    file="src/schemas/xml.xsd" />
-            <schema namespace="http://www.w3.org/1999/xhtml"
-                    file="src/schemas/xhtml-strict.xsd" />
-            <schema namespace="http://www.w3.org/2001/XMLSchema"
-                    file="src/schemas/XMLSchema.xsd" />
-            <dtd publicId="-//W3C//DTD XHTML 1.0 Strict//EN"
-                 location="src/schemas/xhtml1-strict.dtd" />
-            <dtd publicId="-//W3C//ENTITIES Latin 1 for XHTML//EN"
-                 location="src/schemas/xhtml-lat1.ent" />
-            <dtd publicId="-//W3C//ENTITIES Symbols for XHTML//EN"
-                 location="src/schemas/xhtml-symbol.ent" />
-            <dtd publicId="-//W3C//ENTITIES Special for XHTML//EN"
-                 location="src/schemas/xhtml-special.ent" />
+            <schema namespace="http://www.w3.org/XML/1998/namespace" file="src/schemas/xml.xsd" />
+            <schema namespace="http://www.w3.org/1999/xhtml" file="src/schemas/xhtml-strict.xsd" />
+            <schema namespace="http://www.w3.org/2001/XMLSchema" file="src/schemas/XMLSchema.xsd" />
+            <dtd publicId="-//W3C//DTD XHTML 1.0 Strict//EN" location="src/schemas/xhtml1-strict.dtd" />
+            <dtd publicId="-//W3C//ENTITIES Latin 1 for XHTML//EN" location="src/schemas/xhtml-lat1.ent" />
+            <dtd publicId="-//W3C//ENTITIES Symbols for XHTML//EN" location="src/schemas/xhtml-symbol.ent" />
+            <dtd publicId="-//W3C//ENTITIES Special for XHTML//EN" location="src/schemas/xhtml-special.ent" />
         </schemavalidate>
     </presetdef>
 
@@ -206,18 +181,15 @@
         <sequential>
             <!-- expand inclusions -->
             <tempfile property="@{schema}.inclusions" deleteonexit="true" />
-            <docorro:schematron-include in="@{schema}"
-                                        out="${@{schema}.inclusions}" />
+            <docorro:schematron-include in="@{schema}" out="${@{schema}.inclusions}" />
 
             <!-- expand abstract patterns -->
             <tempfile property="@{schema}.patterns" deleteonexit="true" />
-            <docorro:schematron-patterns in="${@{schema}.inclusions}"
-                                         out="${@{schema}.patterns}" />
+            <docorro:schematron-patterns in="${@{schema}.inclusions}" out="${@{schema}.patterns}" />
 
             <!-- compile it -->
             <tempfile property="@{schema}.xslt" deleteonexit="true" />
-            <docorro:schematron-compile in="${@{schema}.patterns}"
-                                        out="${@{schema}.xslt}">
+            <docorro:schematron-compile in="${@{schema}.patterns}" out="${@{schema}.xslt}">
                 <param name="diagnose" expression="true" />
                 <param name="terminate" expression="@{failonerror}" />
             </docorro:schematron-compile>
@@ -235,21 +207,15 @@
         </sequential>
     </macrodef>
 
-    <target name="post-commit"
-            description="report on the quick tests"
-            depends="report-quick-tests" />
+    <target name="post-commit" description="report on the quick tests" depends="report-quick-tests" />
 
-    <target name="pre-commit"
-            description="run the quick tests and fail on the first error"
-            depends="run-quick-tests" />
+    <target name="pre-commit" description="run the quick tests and fail on the first error" depends="run-quick-tests" />
 
     <property name="docorro.xslt" location="src/xslt/docorro.xslt" />
 
     <macrodef name="create-doc" uri="org.windyroad.docorro">
-        <attribute name="in"
-                   description="specifies a single XML document to be styled." />
-        <attribute name="out"
-                   description="specifies the output name for the styled result from the in attribute." />
+        <attribute name="in" description="specifies a single XML document to be styled." />
+        <attribute name="out" description="specifies the output name for the styled result from the in attribute." />
         <sequential>
             <docorro:xslt in="@{in}" out="@{out}" style="${docorro.xslt}" />
             <fail message="HTML not built">
@@ -276,11 +242,18 @@
             <for param="sch">
                 <fileset dir="src/test/@{phase}" includes="*.sch" />
                 <sequential>
-                    <basename property="@{sch}.basename"
-                              file="@{sch}"
-                              suffix=".sch" />
-                    <docorro:create-doc in="src/test/data/${@{sch}.basename}.wsdl"
-                                        out="build/@{phase}/${@{sch}.basename}.html" />
+                    <basename property="@{sch}.basename" file="@{sch}" suffix=".sch" />
+                    <if>
+                        <available file="src/test/data/${@{sch}.basename}.wsdl" />
+                        <then>
+                            <docorro:create-doc in="src/test/data/${@{sch}.basename}.wsdl"
+                                                out="build/@{phase}/${@{sch}.basename}.html" />
+                        </then>
+                        <else>
+                            <docorro:create-doc in="src/test/data/${@{sch}.basename}.xsd"
+                                                out="build/@{phase}/${@{sch}.basename}.html" />
+                        </else>
+                    </if>
                 </sequential>
             </for>
 
@@ -317,31 +290,25 @@
     </macrodef>
 
 
-    <target name="run-quick-tests"
-            description="Run tests"
-            depends="-load-ant-contrib,compile-Java">
+    <target name="run-quick-tests" description="Run tests" depends="-load-ant-contrib,compile-Java">
         <junit printsummary="yes" haltonerror="true" haltonfailure="true">
-    		<classpath refid="classpath.test"/>
-    		<formatter type="plain" usefile="false"/>
-    		<batchtest>
-    			<fileset dir="src">
-    				<include name="**/*Test.java"/>
-    			</fileset>
-    		</batchtest>	
-    	</junit>
+            <classpath refid="classpath.test" />
+            <formatter type="plain" usefile="false" />
+            <batchtest>
+                <fileset dir="src">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+        </junit>
         <docorro:run-sch-tests phase="quick" />
 
     </target>
 
-    <target name="run-pending-tests"
-            description="Run tests"
-            depends="-load-ant-contrib">
+    <target name="run-pending-tests" description="Run tests" depends="-load-ant-contrib">
         <docorro:run-sch-tests phase="pending" />
     </target>
 
-    <target name="run-slow-tests"
-            description="Run tests"
-            depends="-load-ant-contrib">
+    <target name="run-slow-tests" description="Run tests" depends="-load-ant-contrib">
         <docorro:run-sch-tests phase="slow" />
     </target>
 

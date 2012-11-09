@@ -4,7 +4,54 @@
 	xmlns:ns1="http://windyroad.org/bwunit-errors-0.0.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:tns="http://windyroad.org/bwunit-concrete" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	name="BWUnit" targetNamespace="http://windyroad.org/bwunit-concrete">
-	<wsdl:documentation>Version 1.1</wsdl:documentation>
+	<wsdl:documentation>Version 1.1
+	
+Here are some of the different types of markup that are possible
+
+[ YES   | 1      ]
+[ NO    | 0      ]
+
+[[ Name | Value ]]
+[ YES   | 1      ]
+[ NO    | 0      ]
+
+[[ YES   | 1      ]
+[[ NO    | 0      ]
+
+img:my caption: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
+
+ * an item 
+ * an other item
+ 
+ 1. first item
+ 1. second item
+ 
+http://docorro.com
+
+Some text with `back tick` code
+
+Some text with *bold*
+
+Some text with _italic_
+
+(c)
+
+(r)
+
+(tm)
+
+== L2 Heading ==
+
+=== L3 Heading ===
+
+==== L4 Heading ====
+
+===== L5 Heading =====
+
+====== L6 Heading ======
+
+
+</wsdl:documentation>
 	<wsdl:types>
 		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 			xmlns:bwu="http://windyroad.org/bwunit-0.0.0.xsd" targetNamespace="http://windyroad.org/bwunit-0.0.0.xsd"
