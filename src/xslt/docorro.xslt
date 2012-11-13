@@ -960,16 +960,21 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 						<xsl:text>xs:complexType</xsl:text>
 					</xsl:when>
 					<xsl:when
-						test="exists(@type) and exists(docorro:get-simple-type(@type,.)/*)">
-						<xsl:call-template name="output-simple-type">
-							<xsl:with-param name="type">
-								<xsl:copy-of select="docorro:get-simple-type(@type,.)" />
-							</xsl:with-param>
-						</xsl:call-template>
+						test="exists(@type)">
+						<xsl:variable name="simple" select="docorro:get-simple-type(@type,.)" />
+						<xsl:choose>
+							<xsl:when test="exists($simple/*)">
+								<xsl:call-template name="output-simple-type">
+									<xsl:with-param name="type">
+										<xsl:copy-of select="docorro:get-simple-type(@type,.)" />
+									</xsl:with-param>
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="@type" />
+							</xsl:otherwise>
+						</xsl:choose>
 					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="@type" />
-					</xsl:otherwise>
 				</xsl:choose>
 			</td>
 			<td>
@@ -2156,12 +2161,24 @@ BLOCK CONTENT;</xsl:text>
 			<xsl:text> has a ns of </xsl:text>
 			<xsl:value-of select="$namespace" />
 		</xsl:message>
-		<xsl:message>
-			<xsl:copy-of
-				select="$type-catalogue/xs:schema[@targetNamespace=$namespace]/xs:element[@name=replace($type,'.*:','')]" />
-		</xsl:message>
-		<xsl:copy-of
-			select="$type-catalogue/xs:schema[@targetNamespace=$namespace]/xs:element[@name=replace($type,'.*:','')]" />
+		<xsl:choose>
+			<xsl:when test="$namespace != ''">
+				<xsl:message>
+					<xsl:copy-of
+						select="$type-catalogue/xs:schema[@targetNamespace=$namespace]/xs:element[@name=replace($type,'.*:','')]" />
+				</xsl:message>
+				<xsl:copy-of
+					select="$type-catalogue/xs:schema[@targetNamespace=$namespace]/xs:element[@name=replace($type,'.*:','')]" />
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:message>
+					<xsl:copy-of
+						select="$type-catalogue/xs:schema[empty(@targetNamespace)]/xs:element[@name=$type]" />
+				</xsl:message>
+				<xsl:copy-of
+					select="$type-catalogue/xs:schema[empty(@targetNamespace)]/xs:element[@name=$type]" />
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:function>
 
 	<xsl:function name="docorro:get-cardinality">
