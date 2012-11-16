@@ -8,6 +8,8 @@
 		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
 		doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" />
 
+	<xsl:param name="fail-on-unknown" select="false" />
+
 	<xsl:variable name="type-catalogue">
 		<xsl:copy-of select="//xs:schema" />
 	</xsl:variable>
@@ -259,6 +261,13 @@ p {
     margin-bottom: 0.5em;
 }
 
+table.detail tr td p {
+    margin-top: 0em;
+    margin-bottom: 0em;
+    padding-top: 0em;
+    padding-bottom: 1em;
+}
+
 em {
     font-style: italic;
 }
@@ -327,6 +336,20 @@ tr:target, tr.alt:target {
     font-weight: bold;
 }
 
+td.type ul {
+    list-style-type: none;
+}
+
+span.error {
+    background: rgba(255, 0, 0, 0.1);
+    border-left: 3px solid rgba(255, 0, 0, 0.1); 
+    border-right: 3px solid rgba(255, 0, 0, 0.1);
+    border-top: 1px solid rgba(255, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    color: #FF0000;
+}
 
 ]]></xsl:text>
 				</style>
@@ -538,12 +561,42 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 							</span>
 						</xsl:if>
 					</h1>
+
 					<xsl:variable name="content">
-						<xsl:call-template name="output-content">
-							<xsl:with-param name="content"
-								select="replace(wsdl:definitions/wsdl:documentation, '^\s*(Version .*?)($.*)', '$2', 'sm')" />
-							<xsl:with-param name="section" select="wsdl:definitions/@name" />
-						</xsl:call-template>
+
+						<xsl:if test="xs:schema/namespace::*">
+							<h2 id="{docorro:convert-to-id('Namespaces')}">Top Level Namespaces</h2>
+							<table>
+								<thead>
+									<tr>
+										<th>Prefix</th>
+										<th>URI</th>
+									</tr>
+								</thead>
+								<tbody>
+									<xsl:for-each select="xs:schema/namespace::*">
+										<tr>
+											<td>
+												<xsl:value-of select="local-name()" />
+											</td>
+											<td>
+												<xsl:value-of select="." />
+											</td>
+										</tr>
+									</xsl:for-each>
+								</tbody>
+							</table>
+						</xsl:if>
+
+						<xsl:if
+							test="replace((wsdl:definitions/wsdl:documentation | xs:schema/xs:annotation/xs:documentation)[1], '^\s*(Version .*?)($.*)', '$2', 'sm')">
+							<h2 id="{docorro:convert-to-id('Overview')}">Overview</h2>
+							<xsl:call-template name="output-content">
+								<xsl:with-param name="content"
+									select="replace((wsdl:definitions/wsdl:documentation | xs:schema/xs:annotation/xs:documentation)[1], '^\s*(Version .*?)($.*)', '$2', 'sm')" />
+								<xsl:with-param name="section" select="wsdl:definitions/@name" />
+							</xsl:call-template>
+						</xsl:if>
 
 						<xsl:if test="wsdl:definitions/wsdl:portType">
 							<h2 id="{docorro:convert-to-id('Operation')}">Operations</h2>
@@ -951,16 +1004,17 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 				<xsl:value-of select="$indent" />
 				<xsl:value-of select="@name" />
 			</td>
-			<td>
+			<td class="type">
 				<xsl:choose>
 					<xsl:when test="exists(xs:complexType) and empty(xs:complexType/*)">
 						<em>Empty</em>
 					</xsl:when>
 					<xsl:when test="exists(xs:complexType)">
-						<xsl:text>xs:complexType</xsl:text>
+						<strong>
+							<xsl:text>xs:complexType</xsl:text>
+						</strong>
 					</xsl:when>
-					<xsl:when
-						test="exists(@type)">
+					<xsl:when test="exists(@type)">
 						<xsl:variable name="simple" select="docorro:get-simple-type(@type,.)" />
 						<xsl:choose>
 							<xsl:when test="exists($simple/*)">
@@ -971,11 +1025,49 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 								</xsl:call-template>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="@type" />
+								<strong>
+									<xsl:value-of select="@type" />
+								</strong>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:when>
 				</xsl:choose>
+				<xsl:if test="xs:unique | xs:keyref | xs:key">
+					<ul>
+						<xsl:for-each select="xs:unique | xs:keyref | xs:key">
+							<li>
+								<xsl:value-of select="local-name()" />
+								<xsl:text> "</xsl:text>
+								<xsl:value-of select="@name" />
+								<xsl:text>":</xsl:text>
+								<ul>
+									<li>
+										<xsl:text>Selector: </xsl:text>
+										<xsl:value-of select="xs:selector/@xpath" />
+									</li>
+									<li>
+										<xsl:choose>
+											<xsl:when test="count(xs:field) > 1">
+												<xsl:text>Fields: </xsl:text>
+												<ul>
+													<xsl:for-each select="xs:field">
+														<li>
+															<xsl:value-of select="@xpath" />
+														</li>
+													</xsl:for-each>
+												</ul>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:text>Field: </xsl:text>
+												<xsl:value-of select="xs:field/@xpath" />
+											</xsl:otherwise>
+										</xsl:choose>
+									</li>
+								</ul>
+							</li>
+						</xsl:for-each>
+					</ul>
+				</xsl:if>
 			</td>
 			<td>
 				<xsl:value-of select="$cardinality" />
@@ -988,6 +1080,18 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 </xsl:text>
 					</xsl:if>
 				</xsl:variable>
+				<xsl:for-each select="xs:unique | xs:keyref | xs:key">
+					<xsl:if test="xs:annotation/xs:documentation">
+						<p>
+							<xsl:call-template name="output-content">
+								<xsl:with-param name="content"
+									select="xs:annotation/xs:documentation" />
+								<xsl:with-param name="section" select="$section" />
+							</xsl:call-template>
+						</p>
+					</xsl:if>
+				</xsl:for-each>
+
 				<xsl:call-template name="output-content">
 					<xsl:with-param name="content"
 						select="concat($extra-doc, xs:annotation/xs:documentation)" />
@@ -1028,7 +1132,11 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 				</xsl:apply-templates>
 			</xsl:if>
 			<xsl:apply-templates
-				select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'annotation')]">
+				select="*[namespace-uri() != 'http://www.w3.org/2001/XMLSchema' or (local-name() != 'annotation' 
+				and local-name() != 'unique'
+                and local-name() != 'keyref'
+                and local-name() != 'key'
+                )]">
 				<xsl:with-param name="indent"
 					select="concat($indent, '&#160;&#160;&#160;&#160;')" />
 				<xsl:with-param name="section" select="$section" />
@@ -1107,7 +1215,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 						</xsl:call-template>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="$type/xs:simpleType/xs:restriction/@base" />
+						<strong>
+							<xsl:value-of select="$type/xs:simpleType/xs:restriction/@base" />
+						</strong>
 						<xsl:text> { </xsl:text>
 					</xsl:otherwise>
 				</xsl:choose>
@@ -1117,7 +1227,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 				</xsl:if>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text>xs:simpleType</xsl:text>
+				<strong>
+					<xsl:text>xs:simpleType</xsl:text>
+				</strong>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -1139,20 +1251,17 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="xs:maxLength">
-		<xsl:text>max-length:</xsl:text>
-		<xsl:value-of select="@value" />
-		<xsl:text>; </xsl:text>
-	</xsl:template>
-
-	<xsl:template match="xs:totalDigits">
-		<xsl:text>total-digits:</xsl:text>
-		<xsl:value-of select="@value" />
-		<xsl:text>; </xsl:text>
-	</xsl:template>
-
-	<xsl:template match="xs:minInclusive">
-		<xsl:text>min:</xsl:text>
+	<xsl:template
+		match="xs:maxLength 
+	   | xs:minLength 
+	   | xs:totalDigits
+	   | xs:minInclusive
+	   | xs:maxInclusive
+	   | xs:fractionDigits
+	   | xs:length
+	   ">
+		<xsl:value-of select="local-name()" />
+		<xsl:text>:</xsl:text>
 		<xsl:value-of select="@value" />
 		<xsl:text>; </xsl:text>
 	</xsl:template>
@@ -1161,24 +1270,6 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 		<xsl:text>pattern:'</xsl:text>
 		<xsl:value-of select="@value" />
 		<xsl:text>'; </xsl:text>
-	</xsl:template>
-
-	<xsl:template match="xs:maxInclusive">
-		<xsl:text>max:</xsl:text>
-		<xsl:value-of select="@value" />
-		<xsl:text>; </xsl:text>
-	</xsl:template>
-
-	<xsl:template match="xs:fractionDigits">
-		<xsl:text>fraction-digits:</xsl:text>
-		<xsl:value-of select="@value" />
-		<xsl:text>; </xsl:text>
-	</xsl:template>
-
-	<xsl:template match="xs:length">
-		<xsl:text>length:</xsl:text>
-		<xsl:value-of select="@value" />
-		<xsl:text>; </xsl:text>
 	</xsl:template>
 
 	<xsl:template match="xs:element[exists(@ref)]">
@@ -1388,7 +1479,9 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 				<xsl:text>*</xsl:text>
 			</td>
 			<td>
-				<xsl:text>xs:any</xsl:text>
+				<strong>
+					<xsl:text>xs:any</xsl:text>
+				</strong>
 			</td>
 			<td>
 				<xsl:value-of select="$cardinality" />
@@ -1404,11 +1497,29 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 	</xsl:template>
 
 	<xsl:template match="*" priority="-1">
-		<xsl:message terminate="yes">
-			<xsl:text>Unknown element
+		<xsl:choose>
+			<xsl:when test="boolean($fail-on-unknown)">
+				<xsl:message terminate="yes">
+					<xsl:text>Unknown element
 </xsl:text>
-			<xsl:copy-of select="." />
-		</xsl:message>
+					<xsl:copy-of select="." />
+				</xsl:message>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:message terminate="no">
+					<xsl:text>Unknown element
+</xsl:text>
+					<xsl:copy-of select="." />
+				</xsl:message>
+				<span class="error">
+					<xsl:text>Processing of </xsl:text>
+					<code>
+						<xsl:value-of select="name()" />
+					</code>
+					<xsl:text> within this context has not been implemented yet. Sorry!</xsl:text>
+				</span>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 
@@ -1427,7 +1538,11 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 				<xsl:value-of select="@name" />
 			</td>
 			<td>
-				<xsl:value-of select="@type" />
+				<xsl:call-template name="output-simple-type">
+					<xsl:with-param name="type">
+						<xsl:copy-of select="docorro:get-simple-type(@type,.)" />
+					</xsl:with-param>
+				</xsl:call-template>
 			</td>
 			<td>
 				<xsl:value-of select="$cardinality" />
@@ -1445,8 +1560,41 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 	<xsl:template name="output-content">
 		<xsl:param name="content" />
 		<xsl:param name="section" />
+		<xsl:variable name="initial-indent">
+			<xsl:choose>
+				<xsl:when test="matches($content, '(^[\n\\])?^(\s+)', 'm')">
+					<xsl:value-of select="replace($content, '(^[\n\\])?^(\s+).+', '$2', 'sm')" />
+				</xsl:when>
+				<xsl:otherwise></xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:message>
+			<xsl:text>INITIAL-INDENT ===</xsl:text>
+			<xsl:value-of select="$initial-indent" />
+			<xsl:text>===</xsl:text>
+		</xsl:message>
+		<xsl:variable name="ucontent">
+			<xsl:choose>
+				<xsl:when test="$initial-indent != ''">
+					<xsl:value-of
+						select="replace($content, concat('^', $initial-indent), '$1', 'm')" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$content" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:message>
+			<xsl:text>UN-INDENTENT CONTENT:
+</xsl:text>
+			<xsl:value-of select="$ucontent" />
+			<xsl:text>
+UN-INDENTENT CONTENT;</xsl:text>
+		</xsl:message>
+
 		<xsl:variable name="blocks"
-			select="tokenize($content, '[\n\\]\s*[\n\\]')" />
+			select="tokenize($ucontent, '[\n\\]\s*[\n\\]')" />
+
 		<xsl:choose>
 			<xsl:when test="count($blocks) > 1">
 				<xsl:for-each select="$blocks">
@@ -1461,7 +1609,7 @@ iffl5+MmKf+eXC+2QBK9e4Cl9sBnNOdG3Y8M9xotZ/lSX3ES/u60Hz3j9+hZy69LntziS+yom0pD
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:call-template name="inline">
-					<xsl:with-param name="content" select="$content" />
+					<xsl:with-param name="content" select="$ucontent" />
 					<xsl:with-param name="section" select="$section" />
 				</xsl:call-template>
 			</xsl:otherwise>
@@ -1789,18 +1937,8 @@ A CONTENT;</xsl:text>
 			<xsl:text>
 BLOCK CONTENT;</xsl:text>
 		</xsl:message>
+		<!-- img -->
 		<xsl:choose>
-			<!-- table -->
-			<xsl:when test="matches($content, '^\[.*\]')">
-				<xsl:message>
-					<xsl:text>TABLE</xsl:text>
-				</xsl:message>
-				<xsl:call-template name="table">
-					<xsl:with-param name="content" select="$content" />
-					<xsl:with-param name="section" select="$section" />
-				</xsl:call-template>
-			</xsl:when>
-			<!-- img -->
 			<xsl:when test="matches($content, 'img:(.*?):(.*)')">
 				<xsl:message>
 					<xsl:text>IMG</xsl:text>

@@ -237,7 +237,7 @@
         <sequential>
             <mkdir dir="build/@{phase}" />
 
-            <!-- creating the doc is qiicker that checking the doc, so create all the docs first
+            <!-- creating the doc is quicker that checking the doc, so create all the docs first
             so that is that fails, we don't waste out time with checking the documents -->
             <for param="sch">
                 <fileset dir="src/test/@{phase}" includes="*.sch" />
