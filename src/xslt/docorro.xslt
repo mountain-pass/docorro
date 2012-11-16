@@ -11,7 +11,7 @@
 	<xsl:param name="fail-on-unknown" select="false" />
 
 	<xsl:variable name="type-catalogue">
-		<xsl:copy-of select="//xs:schema" />
+		<xsl:copy-of select="docorro:getTypeCatalouge(/)" />
 	</xsl:variable>
 
 	<xsl:template match="/">
@@ -2367,5 +2367,22 @@ BLOCK CONTENT;</xsl:text>
 			<xsl:value-of select="$cardinality" />
 		</xsl:message>
 	</xsl:function>
+
+	<xsl:function name="docorro:getTypeCatalouge">
+		<xsl:param name="doc" />
+		<xsl:copy-of select="$doc//xs:schema" />
+		<import namespace="http://purl.org/dc/elements/1.1/"
+			schemaLocation="http://dublincore.org/schemas/xmls/simpledc20021212.xsd" />
+		<xsl:for-each select="$doc//xs:import">
+			<xsl:if test="doc-available(@schemaLocation)">
+				<xsl:message>
+					<xsl:text>Getting document </xsl:text>
+					<xsl:value-of select="@schemaLocation" />
+				</xsl:message>
+				<xsl:copy-of select="docorro:getTypeCatalouge(doc(@schemaLocation))" />
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:function>
+
 
 </xsl:stylesheet>
